@@ -23,7 +23,7 @@ $dark-theme: (
   background: (
     status-bar: black,
     app-bar:    map_get($mat-grey, 900),
-    background: black,
+    background: #303030,
     hover:      rgba(white, 0.04),
     card:       map_get($mat-grey, 800),
     dialog:     map_get($mat-grey, 900),
@@ -65,7 +65,7 @@ $dark-theme: (
 // @include mat-radio-theme($dark-theme);
 // @include mat-select-theme($dark-theme);
 //@include mat-sidenav-theme($dark-theme);
-//@include mat-slide-toggle-theme($dark-theme);
+@include mat-slide-toggle-theme($dark-theme);
 //@include mat-slider-theme($dark-theme);
 //@include mat-stepper-theme($dark-theme);
 //@include mat-sort-theme($dark-theme);
@@ -166,8 +166,8 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  /*  color: $text-color;
-    background-color: $background-color;*/
+  color: $text-color;
+  background-color: $background-color;
 }
 
 /*@import '~@angular/cdk/text-field';
@@ -181,7 +181,7 @@ input {
   color: $text-color;
 }*/
 
-*::-webkit-scrollbar {
+/**::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
@@ -193,4 +193,4 @@ input {
 }
 *::-webkit-scrollbar-button {
   display: none;
-}
+}*/

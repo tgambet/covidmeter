@@ -1,0 +1,41 @@
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+
+export interface Country {
+  country: string;
+  countryInfo: {
+    iso2: string;
+    iso3: string;
+    lat: number;
+    long: number;
+    flag: string;
+  };
+  cases: number;
+  todayCases: number;
+  deaths: number;
+  todayDeaths: number;
+  recovered: number;
+  active: number;
+  critical: number;
+  casesPerOneMillion: number;
+  deathsPerOneMillion: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService {
+
+  constructor(
+    private httpClient: HttpClient
+  ) {
+  }
+
+  getCountries(): Observable<Country[]> {
+    return this.httpClient.get('https://corona.lmao.ninja/countries').pipe(
+      map(countries => countries as Country[])
+    );
+  }
+}

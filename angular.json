@@ -129,5 +129,8 @@
       }
     }
   },
-  "defaultProject": "covidmeter"
+  "defaultProject": "covidmeter",
+  "cli": {
+    "analytics": false
+  }
 }
