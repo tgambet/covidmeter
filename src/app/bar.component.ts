@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -14,8 +15,9 @@ import {
   selector: 'app-bar',
   template: `
     <svg height="15" #svg>
-      <ng-container *ngFor="let point of displaySet">
-        <rect height="15" [attr.width]="point.length" [attr.fill]="point.color" [attr.x]="point.offset"></rect>
+      <ng-container *ngFor="let point of displaySet; trackBy: trackByFn">
+        <rect height="15" [attr.width]="point.length > 0 ? point.length : 0"
+              [attr.fill]="point.color" attr.transform="translate({{point.offset}}, 0)"></rect>
       </ng-container>
     </svg>
   `,
@@ -24,7 +26,7 @@ import {
       width: 100%;
     }
     rect {
-      transition: width ease 300ms;
+      transition: width ease 300ms, transform ease 300ms;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -60,7 +62,7 @@ export class BarComponent implements OnInit, OnChanges {
     }
   }
 
-  // @HostListener('window:resize')
+  @HostListener('window:resize')
   update() {
     this.length = this.svg.nativeElement.clientWidth;
     this.total = this.dataSet.reduce((r, point) => r + point.value, 0);
@@ -74,6 +76,10 @@ export class BarComponent implements OnInit, OnChanges {
       offset += result.length;
       return result;
     });
+  }
+
+  trackByFn(index, item) {
+    return item.color; // or item.id
   }
 
 }

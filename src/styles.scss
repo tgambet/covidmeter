@@ -3,10 +3,13 @@
 @import '~@angular/material/theming';
 
 // @include mat-core();
+@include mat-form-field-typography(mat-typography-config());
+@include mat-select-typography(mat-typography-config());
+
 @include mat-ripple();
 @include cdk-a11y();
 @include cdk-overlay();
-// @include cdk-text-field();
+@include cdk-text-field();
 
 $dark-theme: mat-dark-theme(
     mat-palette($mat-light-green, A400),
@@ -46,34 +49,34 @@ $dark-theme: (
 @include mat-button-theme($dark-theme);
 // @include mat-button-toggle-theme($dark-theme);
 // @include mat-card-theme($dark-theme);
-@include mat-checkbox-theme($dark-theme);
+// @include mat-checkbox-theme($dark-theme);
 // @include mat-chips-theme($dark-theme);
-@include mat-table-theme($dark-theme);
+// @include mat-table-theme($dark-theme);
 // @include mat-datepicker-theme($dark-theme);
-@include mat-dialog-theme($dark-theme);
-@include mat-divider-theme($dark-theme);
-@include mat-expansion-panel-theme($dark-theme);
-// @include mat-form-field-theme($dark-theme);
+// @include mat-dialog-theme($dark-theme);
+// @include mat-divider-theme($dark-theme);
+// @include mat-expansion-panel-theme($dark-theme);
+@include mat-form-field-theme($dark-theme);
 // @include mat-grid-list-theme($dark-theme);
 @include mat-icon-theme($dark-theme);
 // @include mat-input-theme($dark-theme);
 // @include mat-list-theme($dark-theme);
-@include mat-menu-theme($dark-theme);
+// @include mat-menu-theme($dark-theme);
 // @include mat-paginator-theme($dark-theme);
-@include mat-progress-bar-theme($dark-theme);
+// @include mat-progress-bar-theme($dark-theme);
 // @include mat-progress-spinner-theme($dark-theme);
 // @include mat-radio-theme($dark-theme);
-// @include mat-select-theme($dark-theme);
-//@include mat-sidenav-theme($dark-theme);
+@include mat-select-theme($dark-theme);
+@include mat-sidenav-theme($dark-theme);
 @include mat-slide-toggle-theme($dark-theme);
-//@include mat-slider-theme($dark-theme);
-//@include mat-stepper-theme($dark-theme);
-//@include mat-sort-theme($dark-theme);
-@include mat-tabs-theme($dark-theme);
+// @include mat-slider-theme($dark-theme);
+// @include mat-stepper-theme($dark-theme);
+@include mat-sort-theme($dark-theme);
+// @include mat-tabs-theme($dark-theme);
 @include mat-toolbar-theme($dark-theme);
-//@include mat-tooltip-theme($dark-theme);
-//@include mat-tree-theme($dark-theme);
-//@include mat-snack-bar-theme($dark-theme);
+// @include mat-tooltip-theme($dark-theme);
+// @include mat-tree-theme($dark-theme);
+// @include mat-snack-bar-theme($dark-theme);
 
 $text-color: mat-color(map-get($dark-theme, foreground), text);
 $background-color: mat-color(map-get($dark-theme, background), background);

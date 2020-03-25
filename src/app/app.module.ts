@@ -7,34 +7,31 @@ import {environment} from '../environments/environment';
 import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatButtonModule} from '@angular/material/button';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatDividerModule} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {HttpClientModule} from '@angular/common/http';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {BarComponent} from './bar.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
 
 const MATERIAL_MODULES = [
-  DragDropModule,
+  // DragDropModule,
   MatButtonModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatDividerModule,
+  // MatCheckboxModule,
+  // MatDialogModule,
+  // MatDividerModule,
   MatIconModule,
-  MatMenuModule,
-  MatTabsModule,
+  // MatMenuModule,
+  // MatTabsModule,
   MatToolbarModule,
-  MatProgressBarModule,
+  // MatProgressBarModule,
   MatSidenavModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatFormFieldModule,
+  MatSelectModule
 ];
 
 @NgModule({
