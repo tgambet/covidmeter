@@ -276,7 +276,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.dataSets$ =
       combineLatest([this.countries$, this.normalize$, this.maxCases$]).pipe(
         map(([countries, normalize, max]) =>
-          countries.map(country => ({
+          countries.slice().sort((a, b) => b.cases - a.cases).map(country => ({
             country,
             dataSet: this.getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max)
           })
