@@ -25,10 +25,52 @@ import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
     </mat-toolbar>
 
     <mat-drawer-container class="example-container" hasBackdrop="true">
-      <mat-drawer #drawer mode="side">
+      <mat-drawer #drawer mode="over" [autoFocus]="false">
         DRAWER
       </mat-drawer>
       <mat-drawer-content>
+        <ng-container *ngIf="overview$ | async; let overview">
+          <mat-card>
+            <h1>Overview</h1>
+            <mat-divider></mat-divider>
+            <ul class="overview">
+              <li>
+                <span class="label">Cases</span>
+                <span class="value">{{overview.cases | number}}</span>
+              </li>
+              <li>
+                <span class="label recovered">Recovered</span>
+                <span class="value">{{overview.recovered | number}}</span>
+                <span class="part">({{overview.recovered / overview.cases * 100 | number:'1.0-1'}}%)</span>
+              </li>
+              <li>
+                <span class="label critical">Critical</span>
+                <span class="value">{{overview.critical | number}}</span>
+                <span class="part">({{overview.critical / overview.cases * 100 | number:'1.0-1'}}%)</span>
+              </li>
+              <li>
+                <span class="label deaths">Deaths</span>
+                <span class="value">{{overview.deaths | number}}</span>
+                <span class="part">({{overview.deaths / overview.cases * 100 | number:'1.0-1'}}%)</span>
+              </li>
+            </ul>
+            <app-bar [dataSet]="this.getDataSet(overview.cases, overview.deaths, overview.critical, overview.recovered, true)"></app-bar>
+            <p class="today">Last 24 hours:</p>
+            <ul class="today">
+              <li>
+                <span class="label">Cases</span>
+                <span class="value">{{overview.todayCases | number}}</span>
+                <span class="part">(+{{overview.todayCases / (overview.cases - overview.todayCases) * 100 | number:'1.0-1'}}%)</span>
+              </li>
+              <li>
+                <span class="label">Deaths</span>
+                <span class="value">{{overview.todayDeaths | number}}</span>
+                <span class="part">(+{{overview.todayDeaths / (overview.deaths - overview.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
+              </li>
+            </ul>
+            <button mat-raised-button color="primary" class="update" (click)="updateData()">UPDATE</button>
+          </mat-card>
+        </ng-container>
         <p class="toggle">
           <mat-slide-toggle (change)="setNormalize($event.checked)" color="primary">
             Normalize
@@ -68,7 +110,7 @@ import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
       background-color: #404040;
     }
     mat-drawer-content {
-      padding: 0 16px;
+      padding: 16px;
       overflow: initial;
     }
     .toggle {
@@ -86,7 +128,7 @@ import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
       align-items: center;
       margin-bottom: 8px;
     }
-    h1 {
+    .country h1 {
       flex: 0 0 70px;
       margin: 0;
       padding: 0 8px 0 0;
@@ -101,6 +143,72 @@ import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
       flex: 1 1 auto;
       display: flex;
     }
+    mat-card {
+      font-size: 14px;
+    }
+    mat-card h1 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .overview {
+      list-style: none;
+      margin: 0;
+      padding: 16px 0;
+    }
+    .overview li {
+      display: flex;
+      margin-bottom: 4px;
+    }
+    .label {
+      flex: 0 0 110px;
+      text-align: right;
+      padding-right: 8px;
+      box-sizing: border-box;
+    }
+    .label.recovered {
+      border-left: 8px solid #4caf50;
+    }
+    .label.critical {
+      border-left: 8px solid #ff5722;
+    }
+    .label.deaths {
+      border-left: 8px solid black;
+    }
+    .value {
+      flex: 0 0 60px;
+      text-align: right;
+      padding-right: 8px;
+    }
+    .part {
+      font-size: 12px;
+      opacity: 0.75;
+      font-weight: 300;
+    }
+    p.today {
+      margin-bottom: 4px;
+    }
+    ul.today {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 0 16px;
+    }
+    ul.today li {
+      display: flex;
+    }
+    ul.today .label {
+      flex-basis: 50px;
+    }
+    ul.today .value {
+      flex-basis: 50px;
+    }
+    .update {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      margin-right: 0;
+      font-size: 12px;
+      font-weight: 500;
+    }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -109,6 +217,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChildren('countries')
   countries: QueryList<ElementRef>;
 
+  overview$: Observable<{
+    cases: number,
+    todayCases: number,
+    deaths: number,
+    todayDeaths: number,
+    recovered: number,
+    active: number,
+    critical: number
+  }>;
   normalize$: Observable<boolean>;
   maxCases$: Observable<number>;
   countries$: Observable<Country[]>;
@@ -130,7 +247,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(fetchCountries());
+    this.updateData();
 
     this.countries$ = this.store.pipe(
       select(getCountries)
@@ -144,12 +261,24 @@ export class AppComponent implements OnInit, AfterViewInit {
       select(getMaxCases)
     );
 
+    this.overview$ = this.countries$.pipe(
+      map(countries => countries.reduce((result, country) => ({
+        cases: result.cases + country.cases,
+        todayCases: result.todayCases + country.todayCases,
+        deaths: result.deaths + country.deaths,
+        todayDeaths: result.todayDeaths + country.todayDeaths,
+        recovered: result.recovered + country.recovered,
+        active: result.active + country.active,
+        critical: result.critical + country.critical
+      }), {cases: 0, todayCases: 0, deaths: 0, todayDeaths: 0, recovered: 0, active: 0, critical: 0}))
+    );
+
     this.dataSets$ =
       combineLatest([this.countries$, this.normalize$, this.maxCases$]).pipe(
         map(([countries, normalize, max]) =>
           countries.map(country => ({
             country,
-            dataSet: this.getDataSet(country, normalize, max)
+            dataSet: this.getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max)
           })
         ))
       );
@@ -182,15 +311,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     ).subscribe();
   }
 
-  getDataSet(country: Country, normalize: boolean, max?: number): {value: number; color: string}[] {
+  getDataSet(cases: number, deaths: number, critical: number, recovered: number, normalize: boolean, max?: number): {value: number; color: string}[] {
     const set = [
-      {value: country.deaths, color: 'black'},
-      {value: country.critical, color: '#ff5722'},
-      {value: country.recovered, color: '#4caf50'},
-      {value: country.cases - country.deaths - country.critical - country.recovered, color: '#9e9e9e'},
+      {value: deaths, color: 'black'},
+      {value: critical, color: '#ff5722'},
+      {value: recovered, color: '#4caf50'},
+      {value: cases - deaths - critical - recovered, color: '#9e9e9e'},
     ];
     return !normalize ? [...set,
-      {value: max - country.cases, color: 'transparent'}
+      {value: max - cases, color: 'transparent'}
     ] : set;
   }
 
@@ -204,5 +333,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setNormalize(normalize: boolean) {
     this.store.dispatch(setNormalize({normalize}));
+  }
+
+  updateData() {
+    this.store.dispatch(fetchCountries());
   }
 }

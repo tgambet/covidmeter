@@ -38,4 +38,10 @@ export class DataService {
       map(countries => countries as Country[])
     );
   }
+
+  getAll(): Observable<Country[]> {
+    return this.httpClient.get('https://corona.lmao.ninja/all').pipe(
+      map(countries => countries as Country[])
+    );
+  }
 }

@@ -19,13 +19,15 @@ import {MatSelectModule} from '@angular/material/select';
 import {reducers} from "./store";
 import {CoreEffects} from "./store/core.effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import {MatCardModule} from "@angular/material/card";
+import {MatDividerModule} from "@angular/material/divider";
 
 const MATERIAL_MODULES = [
   // DragDropModule,
   MatButtonModule,
   // MatCheckboxModule,
   // MatDialogModule,
-  // MatDividerModule,
+  MatDividerModule,
   MatIconModule,
   // MatMenuModule,
   // MatTabsModule,
@@ -34,7 +36,8 @@ const MATERIAL_MODULES = [
   MatSidenavModule,
   MatSlideToggleModule,
   MatFormFieldModule,
-  MatSelectModule
+  MatSelectModule,
+  MatCardModule
 ];
 
 @NgModule({
