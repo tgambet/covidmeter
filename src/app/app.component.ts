@@ -3,14 +3,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
   OnInit,
   QueryList,
   ViewChildren
 } from '@angular/core';
 import {Country, DataService} from './data.service';
-import {concatMap, map, shareReplay, switchMap, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {combineLatest, Observable} from 'rxjs';
+import {select, Store} from "@ngrx/store";
+import {fetchCountries, setMaxCases, setNormalize} from "./store/core.actions";
+import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
 
 @Component({
   selector: 'app-root',
@@ -28,7 +30,7 @@ import {Observable} from 'rxjs';
       </mat-drawer>
       <mat-drawer-content>
         <p class="toggle">
-          <mat-slide-toggle (change)="this.normalize$.emit($event.checked)" color="primary">
+          <mat-slide-toggle (change)="setNormalize($event.checked)" color="primary">
             Normalize
           </mat-slide-toggle>
           <mat-form-field appearance="legacy">
@@ -85,10 +87,10 @@ import {Observable} from 'rxjs';
       margin-bottom: 8px;
     }
     h1 {
-      flex: 0 0 100px;
+      flex: 0 0 70px;
       margin: 0;
       padding: 0 8px 0 0;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 400;
       text-align: right;
       white-space: nowrap;
@@ -107,12 +109,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChildren('countries')
   countries: QueryList<ElementRef>;
 
-  normalize$: EventEmitter<boolean> = new EventEmitter();
-  normalizeReplay$: Observable<boolean>;
-  max$: EventEmitter<number> = new EventEmitter();
-  maxReplay$: Observable<number>;
-
+  normalize$: Observable<boolean>;
+  maxCases$: Observable<number>;
   countries$: Observable<Country[]>;
+
   dataSets$: Observable<{country: Country; dataSet: {value: number; color: string}[]}[]>;
 
   sortBys = [
@@ -124,60 +124,35 @@ export class AppComponent implements OnInit, AfterViewInit {
   observer: IntersectionObserver;
 
   constructor(
-    private dataService: DataService
+    private dataService: DataService,
+    private store: Store
   ) {
   }
 
   ngOnInit(): void {
-    this.countries$ = this.dataService.getCountries().pipe(
-      shareReplay(1),
+    this.store.dispatch(fetchCountries());
+
+    this.countries$ = this.store.pipe(
+      select(getCountries)
     );
 
-    this.maxReplay$ = this.max$.pipe(
-      shareReplay(1)
+    this.normalize$ = this.store.pipe(
+      select(getNormalize)
     );
 
-    this.maxReplay$.subscribe();
-
-    this.max$.emit(0);
-
-    this.normalizeReplay$ = this.normalize$.pipe(
-      shareReplay(1)
+    this.maxCases$ = this.store.pipe(
+      select(getMaxCases)
     );
-
-    this.normalizeReplay$.subscribe();
-
-    this.normalize$.emit(false);
 
     this.dataSets$ =
-      this.countries$.pipe(
-        tap(countries => this.saveToLocalStorage(countries)),
-        concatMap(countries => this.normalizeReplay$.pipe(
-          switchMap(normalize => this.maxReplay$.pipe(
-            map(max => countries.map(country => ({
-              country,
-              dataSet: this.getDataSet(country, normalize, max)
-            })))
-          ))
-        ))
-      );
-
-      /*this.normalize$.asObservable().pipe(
-        switchMap(normalize => this.countries$.pipe(
-          switchMap(countries => this.max$.pipe(
-            map(max => [countries, max])
-          )),
-          map(([countries, max]) => {
-            return (countries as Country[]).map(country => ({
-              country,
-              dataSet: this.getDataSet(country, normalize, max as number)
-            }));
+      combineLatest([this.countries$, this.normalize$, this.maxCases$]).pipe(
+        map(([countries, normalize, max]) =>
+          countries.map(country => ({
+            country,
+            dataSet: this.getDataSet(country, normalize, max)
           })
         ))
-      );*/
-
-    // setTimeout(() => this.normalize$.emit(false), 1000);
-    // setTimeout(() => this.max$.emit(1000000), 1000);
+      );
 
     const options = {
       root: null,
@@ -193,16 +168,15 @@ export class AppComponent implements OnInit, AfterViewInit {
       entry.target.setAttribute('data-visible', entry.isIntersecting.toString());
     });
     const max = this.countries.reduce((m, country) => {
-      if (country.nativeElement.getAttribute('data-visible') === 'true') {
-        return Math.max(m, +country.nativeElement.getAttribute('data-max'));
-      }
-      return m;
+      return country.nativeElement.getAttribute('data-visible') === 'true' ?
+        Math.max(m, +country.nativeElement.getAttribute('data-max')) :
+        m;
     }, 0);
-    console.log('emit', max);
-    this.max$.emit(max);
+    this.store.dispatch(setMaxCases({maxCases: max}))
   }
 
   ngAfterViewInit(): void {
+    // TODO unsubscribe on destroy
     this.countries.changes.pipe(
       map(list => list.map(c => this.observer.observe(c.nativeElement)))
     ).subscribe();
@@ -210,7 +184,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   getDataSet(country: Country, normalize: boolean, max?: number): {value: number; color: string}[] {
     const set = [
-      {value: country.deaths, color: '#212121'},
+      {value: country.deaths, color: 'black'},
       {value: country.critical, color: '#ff5722'},
       {value: country.recovered, color: '#4caf50'},
       {value: country.cases - country.deaths - country.critical - country.recovered, color: '#9e9e9e'},
@@ -226,5 +200,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   saveToLocalStorage(countries: Country[]) {
     localStorage.setItem('all', JSON.stringify(countries));
+  }
+
+  setNormalize(normalize: boolean) {
+    this.store.dispatch(setNormalize({normalize}));
   }
 }

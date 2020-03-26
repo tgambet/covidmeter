@@ -16,6 +16,9 @@ import {BarComponent} from './bar.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
+import {reducers} from "./store";
+import {CoreEffects} from "./store/core.effects";
+import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -43,8 +46,9 @@ const MATERIAL_MODULES = [
     BrowserModule,
     HttpClientModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    StoreModule.forRoot({}, {}),
-    EffectsModule.forRoot([]),
+    StoreModule.forRoot(reducers, {}),
+    StoreDevtoolsModule.instrument({maxAge: 100, logOnly: environment.production}),
+    EffectsModule.forRoot([CoreEffects]),
     BrowserAnimationsModule,
     ...MATERIAL_MODULES
   ],
