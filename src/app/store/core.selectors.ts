@@ -17,3 +17,8 @@ export const getMaxCases = createSelector(
   selectCoreState,
   state => state.maxCases
 );
+
+export const getSortBy = createSelector(
+  selectCoreState,
+  state => state.sortBy
+);

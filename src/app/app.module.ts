@@ -21,6 +21,7 @@ import {CoreEffects} from "./store/core.effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {MatCardModule} from "@angular/material/card";
 import {MatDividerModule} from "@angular/material/divider";
+import {MatInputModule} from "@angular/material/input";
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -37,7 +38,8 @@ const MATERIAL_MODULES = [
   MatSlideToggleModule,
   MatFormFieldModule,
   MatSelectModule,
-  MatCardModule
+  MatCardModule,
+  MatInputModule
 ];
 
 @NgModule({

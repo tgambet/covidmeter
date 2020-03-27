@@ -11,87 +11,89 @@ import {Country, DataService} from './data.service';
 import {map} from 'rxjs/operators';
 import {combineLatest, Observable} from 'rxjs';
 import {select, Store} from "@ngrx/store";
-import {fetchCountries, setMaxCases, setNormalize} from "./store/core.actions";
-import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
+import {fetchCountries, setMaxCases, setNormalize, setSortBy} from "./store/core.actions";
+import {getCountries, getMaxCases, getNormalize, getSortBy} from "./store/core.selectors";
 
 @Component({
   selector: 'app-root',
   template: `
     <mat-toolbar>
-      <button mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      CovidMeter
+      CovidMeter <!--<mat-icon>home</mat-icon> <mat-icon>map</mat-icon>-->
     </mat-toolbar>
-
-    <mat-drawer-container class="example-container" hasBackdrop="true">
-      <mat-drawer #drawer mode="over" [autoFocus]="false">
-        DRAWER
-      </mat-drawer>
-      <mat-drawer-content>
-        <ng-container *ngIf="overview$ | async; let overview">
-          <mat-card>
-            <h1>Overview</h1>
-            <mat-divider></mat-divider>
-            <ul class="overview">
-              <li>
-                <span class="label">Cases</span>
-                <span class="value">{{overview.cases | number}}</span>
-              </li>
-              <li>
-                <span class="label recovered">Recovered</span>
-                <span class="value">{{overview.recovered | number}}</span>
-                <span class="part">({{overview.recovered / overview.cases * 100 | number:'1.0-1'}}%)</span>
-              </li>
-              <li>
-                <span class="label critical">Critical</span>
-                <span class="value">{{overview.critical | number}}</span>
-                <span class="part">({{overview.critical / overview.cases * 100 | number:'1.0-1'}}%)</span>
-              </li>
-              <li>
-                <span class="label deaths">Deaths</span>
-                <span class="value">{{overview.deaths | number}}</span>
-                <span class="part">({{overview.deaths / overview.cases * 100 | number:'1.0-1'}}%)</span>
-              </li>
-            </ul>
-            <app-bar [dataSet]="this.getDataSet(overview.cases, overview.deaths, overview.critical, overview.recovered, true)"></app-bar>
-            <p class="today">Last 24 hours:</p>
-            <ul class="today">
-              <li>
-                <span class="label">Cases</span>
-                <span class="value">{{overview.todayCases | number}}</span>
-                <span class="part">(+{{overview.todayCases / (overview.cases - overview.todayCases) * 100 | number:'1.0-1'}}%)</span>
-              </li>
-              <li>
-                <span class="label">Deaths</span>
-                <span class="value">{{overview.todayDeaths | number}}</span>
-                <span class="part">(+{{overview.todayDeaths / (overview.deaths - overview.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
-              </li>
-            </ul>
-            <button mat-raised-button color="primary" class="update" (click)="updateData()">UPDATE</button>
-          </mat-card>
+    <main>
+      <ng-container *ngIf="overview$ | async; let overview">
+        <mat-card>
+          <h1>Overview</h1>
+          <mat-divider></mat-divider>
+          <ul class="overview">
+            <li>
+              <span class="label">Cases</span>
+              <span class="value">{{overview.cases | number}}</span>
+            </li>
+            <li>
+              <span class="label recovered">Recovered</span>
+              <span class="value">{{overview.recovered | number}}</span>
+              <span class="part">({{overview.recovered / overview.cases * 100 | number:'1.0-1'}}%)</span>
+            </li>
+            <li>
+              <span class="label critical">Critical</span>
+              <span class="value">{{overview.critical | number}}</span>
+              <span class="part">({{overview.critical / overview.cases * 100 | number:'1.0-1'}}%)</span>
+            </li>
+            <li>
+              <span class="label deaths">Deaths</span>
+              <span class="value">{{overview.deaths | number}}</span>
+              <span class="part">({{overview.deaths / overview.cases * 100 | number:'1.0-1'}}%)</span>
+            </li>
+          </ul>
+          <app-bar [dataSet]="this.getDataSet(overview.cases, overview.deaths, overview.critical, overview.recovered, true)"></app-bar>
+          <p class="today">Today:</p>
+          <ul class="today">
+            <li>
+              <span class="label">Cases</span>
+              <span class="value">{{overview.todayCases | number}}</span>
+              <span class="part">(+{{overview.todayCases / (overview.cases - overview.todayCases) * 100 | number:'1.0-1'}}%)</span>
+            </li>
+            <li>
+              <span class="label">Deaths</span>
+              <span class="value">{{overview.todayDeaths | number}}</span>
+              <span class="part">(+{{overview.todayDeaths / (overview.deaths - overview.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
+            </li>
+          </ul>
+          <button mat-raised-button color="primary" class="update" (click)="updateData()">UPDATE</button>
+        </mat-card>
+      </ng-container>
+      <p class="controls">
+        <ng-container *ngIf="normalize$ | async; let normalize">
+          <button mat-icon-button (click)="setNormalize(!normalize)">
+            <mat-icon>format_align_left</mat-icon>
+          </button>
         </ng-container>
-        <p class="toggle">
-          <mat-slide-toggle (change)="setNormalize($event.checked)" color="primary">
-            Normalize
-          </mat-slide-toggle>
-          <mat-form-field appearance="legacy">
-            <mat-label>Sort by</mat-label>
-            <mat-select value="cases">
-              <mat-option *ngFor="let sortBy of sortBys" [value]="sortBy.value">
-                {{sortBy.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </p>
-        <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
-          <div class="country" #countries [attr.data-max]="data.country.cases">
-            <h1>{{data.country.country}}</h1>
-            <app-bar [dataSet]="data.dataSet"></app-bar>
-          </div>
+        <ng-container *ngIf="!(normalize$ | async); let normalize">
+          <button mat-icon-button (click)="setNormalize(normalize)">
+            <mat-icon>format_align_justify</mat-icon>
+          </button>
         </ng-container>
-      </mat-drawer-content>
-    </mat-drawer-container>
+        <mat-form-field appearance="standard" class="sort">
+          <mat-label>Sort by</mat-label>
+          <mat-select [value]="sortBy$ | async" (selectionChange)="setSortBy($event.value)">
+            <mat-option *ngFor="let sortBy of sortBys" [value]="sortBy.value">
+              {{sortBy.viewValue}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="standard" class="search">
+          <mat-label>Search</mat-label>
+          <input matInput placeholder="Search by location" value="">
+        </mat-form-field>
+      </p>
+      <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
+        <div class="country" #countries [attr.data-max]="data.country.cases">
+          <h1>{{data.country.country}}</h1>
+          <app-bar [dataSet]="data.dataSet"></app-bar>
+        </div>
+      </ng-container>
+    </main>
   `,
   styles: [`
     :host {
@@ -99,29 +101,30 @@ import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
       flex-direction: column;
       min-height: 100%;
     }
-    button {
-      margin-right: 16px;
-    }
-    mat-drawer-container {
+    main {
       flex: 1 0 auto;
-      overflow: initial;
-    }
-    mat-drawer {
-      background-color: #404040;
-    }
-    mat-drawer-content {
       padding: 16px;
-      overflow: initial;
     }
-    .toggle {
+    .controls {
       background-color: #303030;
       position: sticky;
       top: 0;
       margin: 0;
-      padding: 16px 0 0 0;
+      padding: 8px 0 0 0;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
     }
-    mat-slide-toggle {
-      margin-right: 16px;
+    .controls button {
+    }
+    .controls mat-form-field {
+      flex: 0 1 auto;
+      padding: 0 8px;
+      box-sizing: border-box;
+      max-width: calc(50vw - 20px - 16px);
+    }
+    .controls .search {
+      padding-right: 0;
     }
     .country {
       display: flex;
@@ -190,13 +193,17 @@ import {getCountries, getMaxCases, getNormalize} from "./store/core.selectors";
     ul.today {
       list-style: none;
       margin: 0;
-      padding: 0 0 0 16px;
+      padding: 0;
     }
     ul.today li {
       display: flex;
+      margin-bottom: 4px;
+    }
+    ul.today li:last-child {
+      margin-bottom: 0;
     }
     ul.today .label {
-      flex-basis: 50px;
+      flex-basis: 75px;
     }
     ul.today .value {
       flex-basis: 50px;
@@ -228,6 +235,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }>;
   normalize$: Observable<boolean>;
   maxCases$: Observable<number>;
+  sortBy$: Observable<string>;
   countries$: Observable<Country[]>;
 
   dataSets$: Observable<{country: Country; dataSet: {value: number; color: string}[]}[]>;
@@ -261,6 +269,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       select(getMaxCases)
     );
 
+    this.sortBy$ = this.store.pipe(
+      select(getSortBy)
+    );
+
     this.overview$ = this.countries$.pipe(
       map(countries => countries.reduce((result, country) => ({
         cases: result.cases + country.cases,
@@ -274,18 +286,29 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
 
     this.dataSets$ =
-      combineLatest([this.countries$, this.normalize$, this.maxCases$]).pipe(
-        map(([countries, normalize, max]) =>
-          countries.slice().sort((a, b) => b.cases - a.cases).map(country => ({
-            country,
-            dataSet: this.getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max)
-          })
+      combineLatest([this.countries$, this.normalize$, this.maxCases$, this.sortBy$]).pipe(
+        map(([countries, normalize, max, sortBy]) =>
+          countries.slice()
+            .sort((a, b) => {
+              switch (sortBy) {
+                case 'cases':
+                  return b.cases - a.cases;
+                case 'mortality':
+                  return (b.deaths / b.cases) - (a.deaths / a.cases);
+                case 'percentage':
+                  return b.casesPerOneMillion - a.casesPerOneMillion;
+              }
+            })
+            .map(country => ({
+              country,
+              dataSet: this.getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max)
+            })
         ))
       );
 
     const options = {
       root: null,
-      rootMargin: `-${82 - 17}px 0px 0px 0px`,
+      rootMargin: `-${78 - 15}px 0px 0px 0px`,
       threshold: 1.0
     };
 
@@ -337,5 +360,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   updateData() {
     this.store.dispatch(fetchCountries());
+  }
+
+  setSortBy(sortBy: string) {
+    this.store.dispatch(setSortBy({sortBy}));
   }
 }

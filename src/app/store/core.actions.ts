@@ -24,3 +24,8 @@ export const setMaxCases = createAction(
   '[Core] Set Max Cases',
   props<{maxCases: number}>()
 );
+
+export const setSortBy = createAction(
+  '[Core] Set Sort By',
+  props<{sortBy: string}>()
+);
