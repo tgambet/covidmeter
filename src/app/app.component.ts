@@ -84,11 +84,11 @@ import {getCountries, getMaxCases, getNormalize, getSortBy} from "./store/core.s
         </mat-form-field>
         <mat-form-field appearance="standard" class="search">
           <mat-label>Search</mat-label>
-          <input matInput placeholder="Search by location" value="">
+          <input matInput placeholder="Search by location" (keyup)="search($event.target)">
         </mat-form-field>
       </p>
       <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
-        <div class="country" #countries [attr.data-max]="data.country.cases">
+        <div class="country" #countries [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country">
           <h1>{{data.country.country}}</h1>
           <app-bar [dataSet]="data.dataSet"></app-bar>
         </div>
@@ -364,5 +364,20 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   setSortBy(sortBy: string) {
     this.store.dispatch(setSortBy({sortBy}));
+  }
+
+  search(target) {
+    const value = target.value;
+
+    const first = this.countries.find(
+      element => element.nativeElement
+        .getAttribute('data-name')
+        .toLowerCase()
+        .includes(value.toLowerCase())
+    );
+
+    if (first) {
+      window.scrollTo({top: first.nativeElement.offsetTop - 78, behavior: "smooth"})
+    }
   }
 }
