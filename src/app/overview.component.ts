@@ -17,7 +17,11 @@ export interface OverviewData {
   selector: 'app-overview',
   template: `
       <mat-card>
-        <h1>World Overview</h1>
+        <h1>
+          <span>{{label}} overview</span>
+          <img [src]="flag" *ngIf="flag" alt="flag"/>
+          <mat-icon *ngIf="!flag">language</mat-icon>
+        </h1>
         <mat-divider></mat-divider>
         <ul class="overview">
           <li>
@@ -64,6 +68,19 @@ export interface OverviewData {
     h1 {
       font-size: 16px;
       font-weight: 500;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    h1 img {
+      display: inline-block;
+      margin-left: auto;
+      height: 24px;
+      min-height: 0;
+      min-width: 0;
+    }
+    h1 mat-icon {
+      margin-left: auto;
     }
     .overview {
       list-style: none;
@@ -132,6 +149,12 @@ export interface OverviewData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OverviewComponent implements OnInit {
+
+  @Input()
+  label: string;
+
+  @Input()
+  flag: string;
 
   @Input()
   data: OverviewData;

@@ -9,7 +9,7 @@ import {setFilterFrom} from "./store/core.actions";
 @Component({
   selector: 'app-world',
   template: `
-    <app-overview [data]="overview$ | async"></app-overview>
+    <app-overview [data]="overview$ | async" label="World"></app-overview>
     <h1>Overview by country</h1>
     <p>
       Show countries with

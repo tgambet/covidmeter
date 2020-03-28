@@ -27,3 +27,8 @@ export const getFilterFrom = createSelector(
   selectCoreState,
   state => state.filterFrom
 );
+
+export const getCountryByName = createSelector(
+  selectCoreState,
+  (state, name: string) => state.countries.find(c => c.country === name)
+);

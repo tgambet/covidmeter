@@ -45,7 +45,7 @@ import {getDataSet} from "./utils";
     </div>
     <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
       <div class="country" #countries [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country">
-        <h1>{{data.country.country}}</h1>
+        <h1><a [routerLink]="['country', data.country.country]">{{data.country.country}}</a></h1>
         <app-bar [dataSet]="data.dataSet"></app-bar>
       </div>
     </ng-container>
@@ -80,7 +80,7 @@ import {getDataSet} from "./utils";
       margin-bottom: 12px;
     }
     .country h1 {
-      flex: 0 0 70px;
+      flex: 0 0 80px;
       margin: 0;
       padding: 0 8px 0 0;
       font-size: 14px;
@@ -90,6 +90,9 @@ import {getDataSet} from "./utils";
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    h1 a {
+      color: white;
     }
     app-bar {
       flex: 1 1 auto;
@@ -183,9 +186,12 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
         map(list => list.map(c => this.observer.observe(c.nativeElement)))
       ).subscribe()
     );
+
+    this.countries.notifyOnChanges();
   }
 
   ngOnDestroy(): void {
+    this.observer.disconnect();
     this.subscription.unsubscribe();
   }
 
@@ -193,12 +199,16 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
     entries.forEach(entry => {
       entry.target.setAttribute('data-visible', entry.isIntersecting.toString());
     });
+    this.updateMaxCases();
+  }
+
+  updateMaxCases(): void {
     const max = this.countries.reduce((m, country) => {
-      return country.nativeElement.getAttribute('data-visible') === 'true' ?
+      return country.nativeElement.getAttribute('data-visible') !== 'false' ?
         Math.max(m, +country.nativeElement.getAttribute('data-max')) :
         m;
     }, 0);
-    this.store.dispatch(setMaxCases({maxCases: max}))
+    this.store.dispatch(setMaxCases({maxCases: max}));
   }
 
   trackByFn(index: number, item) {

@@ -6,7 +6,7 @@ import {fetchCountries} from "./store/core.actions";
   selector: 'app-root',
   template: `
     <mat-toolbar>
-      CovidMeter <!--<mat-icon>home</mat-icon> <mat-icon>map</mat-icon>-->
+      <a routerLink="/">CovidMeter</a> <!--<mat-icon>home</mat-icon> <mat-icon>map</mat-icon>-->
     </mat-toolbar>
     <main>
       <router-outlet></router-outlet>
@@ -18,9 +18,16 @@ import {fetchCountries} from "./store/core.actions";
       flex-direction: column;
       min-height: 100%;
     }
+    a {
+      color: white;
+    }
     main {
       flex: 1 0 auto;
       padding: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      max-width: 600px;
+      margin: 0 auto;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush

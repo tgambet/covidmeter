@@ -22,10 +22,11 @@ import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {MatCardModule} from "@angular/material/card";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatInputModule} from "@angular/material/input";
-import { OverviewComponent } from './overview.component';
-import { CountriesComponent } from './countries.component';
+import {OverviewComponent} from './overview.component';
+import {CountriesComponent} from './countries.component';
 import {RouterModule, Routes} from "@angular/router";
-import { WorldComponent } from './world.component';
+import {WorldComponent} from './world.component';
+import {CountryComponent} from './country.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -48,6 +49,7 @@ const MATERIAL_MODULES = [
 
 const routes: Routes = [
   {path: '', component: WorldComponent},
+  {path: 'country/:name', component: CountryComponent},
 ];
 
 @NgModule({
@@ -56,7 +58,8 @@ const routes: Routes = [
     BarComponent,
     OverviewComponent,
     CountriesComponent,
-    WorldComponent
+    WorldComponent,
+    CountryComponent
   ],
   imports: [
     BrowserModule,
