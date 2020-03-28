@@ -1,8 +1,17 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren
+} from '@angular/core';
 import {combineLatest, Observable, Subscription} from "rxjs";
 import {Country} from "./data.service";
 import {select, Store} from "@ngrx/store";
-import {getCountries, getMaxCases, getNormalize, getSortBy} from "./store/core.selectors";
+import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from "./store/core.selectors";
 import {setMaxCases, setNormalize, setSortBy} from "./store/core.actions";
 import {map} from "rxjs/operators";
 import {getDataSet} from "./utils";
@@ -86,7 +95,8 @@ import {getDataSet} from "./utils";
       flex: 1 1 auto;
       display: flex;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -130,10 +140,16 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
       select(getSortBy)
     );
 
+    const filterFrom$ = this.store.pipe(
+      select(getFilterFrom)
+    );
+
     this.dataSets$ =
-      combineLatest([this.countries$, this.normalize$, this.maxCases$, this.sortBy$]).pipe(
-        map(([countries, normalize, max, sortBy]) =>
-          countries.slice()
+      combineLatest([this.countries$, this.normalize$, this.maxCases$, this.sortBy$, filterFrom$]).pipe(
+        map(([countries, normalize, max, sortBy, filterFrom]) =>
+          countries
+            .filter(country => country.deaths >= filterFrom)
+            .slice()
             .sort((a, b) => {
               switch (sortBy) {
                 case 'cases':

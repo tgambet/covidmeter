@@ -22,3 +22,8 @@ export const getSortBy = createSelector(
   selectCoreState,
   state => state.sortBy
 );
+
+export const getFilterFrom = createSelector(
+  selectCoreState,
+  state => state.filterFrom
+);

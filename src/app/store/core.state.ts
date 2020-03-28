@@ -5,11 +5,13 @@ export interface CoreState {
   normalize: boolean;
   maxCases: number;
   sortBy: string;
+  filterFrom: number;
 }
 
 export const initialState: CoreState = {
   countries: [],
   normalize: false,
   maxCases: 0,
-  sortBy: 'cases'
+  sortBy: 'cases',
+  filterFrom: 10,
 };

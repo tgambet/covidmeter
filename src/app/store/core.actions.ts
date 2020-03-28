@@ -29,3 +29,8 @@ export const setSortBy = createAction(
   '[Core] Set Sort By',
   props<{sortBy: string}>()
 );
+
+export const setFilterFrom = createAction(
+  '[Core] Set Filter From',
+  props<{filterFrom: number}>()
+);

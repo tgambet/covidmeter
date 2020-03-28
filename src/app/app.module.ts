@@ -24,6 +24,8 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatInputModule} from "@angular/material/input";
 import { OverviewComponent } from './overview.component';
 import { CountriesComponent } from './countries.component';
+import {RouterModule, Routes} from "@angular/router";
+import { WorldComponent } from './world.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -44,16 +46,22 @@ const MATERIAL_MODULES = [
   MatInputModule
 ];
 
+const routes: Routes = [
+  {path: '', component: WorldComponent},
+];
+
 @NgModule({
   declarations: [
     AppComponent,
     BarComponent,
     OverviewComponent,
-    CountriesComponent
+    CountriesComponent,
+    WorldComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
+    RouterModule.forRoot(routes, {}),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     StoreModule.forRoot(reducers, {}),
     StoreDevtoolsModule.instrument({maxAge: 100, logOnly: environment.production}),

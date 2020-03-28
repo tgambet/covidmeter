@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {fetchCountries} from "./store/core.actions";
 import {Store} from "@ngrx/store";
 import {getDataSet} from "./utils";
@@ -17,7 +17,7 @@ export interface OverviewData {
   selector: 'app-overview',
   template: `
       <mat-card>
-        <h1>Overview</h1>
+        <h1>World Overview</h1>
         <mat-divider></mat-divider>
         <ul class="overview">
           <li>
@@ -128,7 +128,8 @@ export interface OverviewData {
       font-size: 12px;
       font-weight: 500;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OverviewComponent implements OnInit {
 
