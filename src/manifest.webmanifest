@@ -1,6 +1,6 @@
 {
-  "name": "covidmeter",
-  "short_name": "covidmeter",
+  "name": "CovidMeter",
+  "short_name": "CovidMeter",
   "theme_color": "#000000",
   "background_color": "#303030",
   "display": "standalone",

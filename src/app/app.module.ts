@@ -22,6 +22,8 @@ import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {MatCardModule} from "@angular/material/card";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatInputModule} from "@angular/material/input";
+import { OverviewComponent } from './overview.component';
+import { CountriesComponent } from './countries.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -45,7 +47,9 @@ const MATERIAL_MODULES = [
 @NgModule({
   declarations: [
     AppComponent,
-    BarComponent
+    BarComponent,
+    OverviewComponent,
+    CountriesComponent
   ],
   imports: [
     BrowserModule,

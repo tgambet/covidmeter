@@ -26,7 +26,7 @@ import {
       width: 100%;
     }
     rect {
-      transition: width ease 300ms, transform ease 300ms;
+      transition: width ease 150ms, transform ease 150ms;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
