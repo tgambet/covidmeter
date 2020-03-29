@@ -16,7 +16,14 @@ import {Country} from './data.service';
         </app-overview>
     </ng-container>
   `,
-  styles: []
+  styles: [`
+    :host {
+      display: block;
+      padding: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }`
+  ]
 })
 export class CountryComponent implements OnInit {
 

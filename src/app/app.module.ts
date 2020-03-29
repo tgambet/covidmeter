@@ -11,9 +11,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HttpClientModule} from '@angular/common/http';
-import {MatSidenavModule} from '@angular/material/sidenav';
 import {BarComponent} from './bar.component';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {reducers} from './store';
@@ -27,6 +25,7 @@ import {CountriesComponent} from './countries.component';
 import {RouterModule, Routes} from '@angular/router';
 import {WorldComponent} from './world.component';
 import {CountryComponent} from './country.component';
+import { MapComponent } from './map.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -39,8 +38,8 @@ const MATERIAL_MODULES = [
   // MatTabsModule,
   MatToolbarModule,
   // MatProgressBarModule,
-  MatSidenavModule,
-  MatSlideToggleModule,
+  // MatSidenavModule,
+  // MatSlideToggleModule,
   MatFormFieldModule,
   MatSelectModule,
   MatCardModule,
@@ -50,6 +49,7 @@ const MATERIAL_MODULES = [
 const routes: Routes = [
   {path: '', component: WorldComponent},
   {path: 'country/:name', component: CountryComponent},
+  {path: 'map', component: MapComponent},
 ];
 
 @NgModule({
@@ -59,7 +59,8 @@ const routes: Routes = [
     OverviewComponent,
     CountriesComponent,
     WorldComponent,
-    CountryComponent
+    CountryComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,

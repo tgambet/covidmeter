@@ -24,6 +24,12 @@ import {setFilterFrom} from './store/core.actions';
     <app-countries></app-countries>
   `,
   styles: [`
+    :host {
+      display: block;
+      padding: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
     h1 {
       font-size: 16px;
       font-weight: 500;
