@@ -25,7 +25,7 @@ import {formatNumber} from '@angular/common';
       </ng-container>
     </div>
     <mat-accordion class="controls mat-elevation-z6">
-      <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
             Data
@@ -59,12 +59,12 @@ import {formatNumber} from '@angular/common';
       height: calc(100vh - 56px);
     }
     .legend {
-      width: 100px;
+      width: 75px;
       position: absolute;
       bottom: 8px;
       left: 8px;
       background-color: #303030;
-      padding: 35px 8px 12px 8px;
+      padding: 45px 8px 12px 8px;
       border-radius: 4px;
       z-index: 400;
       display: flex;
