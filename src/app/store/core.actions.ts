@@ -34,3 +34,13 @@ export const setFilterFrom = createAction(
   '[Core] Set Filter From',
   props<{filterFrom: number}>()
 );
+
+export const setMapDataType = createAction(
+  '[Core] Set Map Date Type',
+  props<{dataType: string}>()
+);
+
+export const setMapScale = createAction(
+  '[Core] Set Map Scale',
+  props<{scale: 'linear' | 'log'}>()
+);

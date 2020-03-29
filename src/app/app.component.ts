@@ -7,6 +7,9 @@ import {fetchCountries} from './store/core.actions';
   template: `
     <mat-toolbar>
       <a routerLink="/">CovidMeter</a>
+      <button mat-icon-button routerLink="/">
+        <mat-icon>sort</mat-icon>
+      </button>
       <button mat-icon-button routerLink="map">
         <mat-icon>map</mat-icon>
       </button>

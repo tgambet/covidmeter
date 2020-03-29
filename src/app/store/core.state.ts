@@ -6,6 +6,10 @@ export interface CoreState {
   maxCases: number;
   sortBy: string;
   filterFrom: number;
+  map: {
+    dataType: string;
+    scale: 'linear' | 'log'
+  };
 }
 
 export const initialState: CoreState = {
@@ -14,4 +18,8 @@ export const initialState: CoreState = {
   maxCases: 0,
   sortBy: 'cases',
   filterFrom: 10,
+  map: {
+    dataType: 'cases',
+    scale: 'log'
+  }
 };

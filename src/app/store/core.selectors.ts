@@ -32,3 +32,13 @@ export const getCountryByName = createSelector(
   selectCoreState,
   (state, name: string) => state.countries.find(c => c.country === name)
 );
+
+export const getMapDataType = createSelector(
+  selectCoreState,
+  state => state.map.dataType
+);
+
+export const getMapScale = createSelector(
+  selectCoreState,
+  state => state.map.scale
+);

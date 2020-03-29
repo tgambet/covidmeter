@@ -26,6 +26,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {WorldComponent} from './world.component';
 import {CountryComponent} from './country.component';
 import { MapComponent } from './map.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -43,7 +44,8 @@ const MATERIAL_MODULES = [
   MatFormFieldModule,
   MatSelectModule,
   MatCardModule,
-  MatInputModule
+  MatInputModule,
+  MatExpansionModule
 ];
 
 const routes: Routes = [
