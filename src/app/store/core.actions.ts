@@ -1,5 +1,5 @@
 import {createAction, props} from '@ngrx/store';
-import {Country} from "../data.service";
+import {Country} from '../data.service';
 
 export const fetchCountries = createAction(
   '[Core] Fetch Countries'

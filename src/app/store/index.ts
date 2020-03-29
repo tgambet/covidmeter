@@ -1,6 +1,6 @@
-import {CoreState} from "./core.state";
-import {coreReducer} from "./core.reducer";
-import {ActionReducerMap} from "@ngrx/store";
+import {CoreState} from './core.state';
+import {coreReducer} from './core.reducer';
+import {ActionReducerMap} from '@ngrx/store';
 
 export interface State {
   core: CoreState;

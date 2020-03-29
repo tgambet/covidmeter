@@ -1,4 +1,4 @@
-import {Country} from "../data.service";
+import {Country} from '../data.service';
 
 export interface CoreState {
   countries: Country[];

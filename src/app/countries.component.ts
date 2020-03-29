@@ -8,13 +8,13 @@ import {
   QueryList,
   ViewChildren
 } from '@angular/core';
-import {combineLatest, Observable, Subscription} from "rxjs";
-import {Country} from "./data.service";
-import {select, Store} from "@ngrx/store";
-import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from "./store/core.selectors";
-import {setMaxCases, setNormalize, setSortBy} from "./store/core.actions";
-import {map} from "rxjs/operators";
-import {getDataSet} from "./utils";
+import {combineLatest, Observable, Subscription} from 'rxjs';
+import {Country} from './data.service';
+import {select, Store} from '@ngrx/store';
+import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from './store/core.selectors';
+import {setMaxCases, setNormalize, setSortBy} from './store/core.actions';
+import {map} from 'rxjs/operators';
+import {getDataSet} from './utils';
 
 @Component({
   selector: 'app-countries',
@@ -25,7 +25,7 @@ import {getDataSet} from "./utils";
           <mat-icon>format_align_left</mat-icon>
         </button>
       </ng-container>
-      <ng-container *ngIf="!(normalize$ | async); let normalize">
+      <ng-container *ngIf="(normalize$ | async) === false; let normalize">
         <button mat-mini-fab (click)="setNormalize(normalize)" color="primary">
           <mat-icon>format_align_justify</mat-icon>
         </button>
@@ -234,7 +234,7 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     if (first) {
-      window.scrollTo({top: first.nativeElement.offsetTop - 78, behavior: "smooth"})
+      window.scrollTo({top: first.nativeElement.offsetTop - 78, behavior: 'smooth'});
     }
   }
 

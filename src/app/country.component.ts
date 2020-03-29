@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {filter, map, switchMap} from "rxjs/operators";
-import {select, Store} from "@ngrx/store";
-import {getCountryByName} from "./store/core.selectors";
-import {Observable} from "rxjs";
-import {OverviewData} from "./overview.component";
-import {Country} from "./data.service";
+import {ActivatedRoute} from '@angular/router';
+import {filter, map, switchMap} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
+import {getCountryByName} from './store/core.selectors';
+import {Observable} from 'rxjs';
+import {OverviewData} from './overview.component';
+import {Country} from './data.service';
 
 @Component({
   selector: 'app-country',
@@ -46,7 +46,7 @@ export class CountryComponent implements OnInit {
         active: country.active,
         critical: country.critical,
       }))
-    )
+    );
   }
 
 }

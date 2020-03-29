@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {act, Actions, createEffect, ofType} from '@ngrx/effects';
-import {fetchCountries, fetchCountriesError, fetchCountriesSuccess} from "./core.actions";
-import {DataService} from "../data.service";
-import {map} from "rxjs/operators";
+import {fetchCountries, fetchCountriesError, fetchCountriesSuccess} from './core.actions';
+import {DataService} from '../data.service';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class CoreEffects {

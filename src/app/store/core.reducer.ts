@@ -1,6 +1,6 @@
 import {ActionReducer, createReducer, on} from '@ngrx/store';
-import {CoreState, initialState} from "./core.state";
-import {fetchCountriesSuccess, setFilterFrom, setMaxCases, setNormalize, setSortBy} from "./core.actions";
+import {CoreState, initialState} from './core.state';
+import {fetchCountriesSuccess, setFilterFrom, setMaxCases, setNormalize, setSortBy} from './core.actions';
 
 export const coreReducer: ActionReducer<CoreState> = createReducer(
   initialState,

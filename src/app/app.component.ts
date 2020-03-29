@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Store} from "@ngrx/store";
-import {fetchCountries} from "./store/core.actions";
+import {Store} from '@ngrx/store';
+import {fetchCountries} from './store/core.actions';
 
 @Component({
   selector: 'app-root',

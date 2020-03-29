@@ -1,16 +1,16 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {fetchCountries} from "./store/core.actions";
-import {Store} from "@ngrx/store";
-import {getDataSet} from "./utils";
+import {fetchCountries} from './store/core.actions';
+import {Store} from '@ngrx/store';
+import {getDataSet} from './utils';
 
 export interface OverviewData {
-  cases: number,
-  todayCases: number,
-  deaths: number,
-  todayDeaths: number,
-  recovered: number,
-  active: number,
-  critical: number,
+  cases: number;
+  todayCases: number;
+  deaths: number;
+  todayDeaths: number;
+  recovered: number;
+  active: number;
+  critical: number;
 }
 
 @Component({

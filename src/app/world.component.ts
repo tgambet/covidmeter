@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {select, Store} from "@ngrx/store";
-import {getCountries, getFilterFrom} from "./store/core.selectors";
-import {map} from "rxjs/operators";
-import {Observable} from "rxjs";
-import {OverviewData} from "./overview.component";
-import {setFilterFrom} from "./store/core.actions";
+import {select, Store} from '@ngrx/store';
+import {getCountries, getFilterFrom} from './store/core.selectors';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {OverviewData} from './overview.component';
+import {setFilterFrom} from './store/core.actions';
 
 @Component({
   selector: 'app-world',
