@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {fetchCountries} from './store/core.actions';
+import {fetchCountries, fetchGeoJson} from './store/core.actions';
 
 @Component({
   selector: 'app-root',
@@ -57,5 +57,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(fetchCountries());
+    this.store.dispatch(fetchGeoJson());
   }
 }

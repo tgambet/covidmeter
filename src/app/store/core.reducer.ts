@@ -2,8 +2,10 @@ import {ActionReducer, createReducer, on} from '@ngrx/store';
 import {CoreState, initialState} from './core.state';
 import {
   fetchCountriesSuccess,
+  fetchGeoJsonSuccess,
   setFilterFrom,
-  setMapDataType, setMapScale,
+  setMapDataType,
+  setMapScale,
   setMaxCases,
   setNormalize,
   setSortBy
@@ -31,5 +33,8 @@ export const coreReducer: ActionReducer<CoreState> = createReducer(
   )),
   on(setMapScale, (state, {scale}) => (
     {...state, map: {...state.map, scale}}
+  )),
+  on(fetchGeoJsonSuccess, (state, {geoJson}) => (
+    {...state, map: {...state.map, geoJson}}
   ))
 );

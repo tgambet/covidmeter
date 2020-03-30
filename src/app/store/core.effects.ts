@@ -1,7 +1,14 @@
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {act, Actions, createEffect, ofType} from '@ngrx/effects';
-import {fetchCountries, fetchCountriesError, fetchCountriesSuccess} from './core.actions';
+import {
+  fetchCountries,
+  fetchCountriesError,
+  fetchCountriesSuccess,
+  fetchGeoJson,
+  fetchGeoJsonError,
+  fetchGeoJsonSuccess
+} from './core.actions';
 import {DataService} from '../data.service';
 import {map} from 'rxjs/operators';
 
@@ -22,6 +29,16 @@ export class CoreEffects {
         map(countries => fetchCountriesSuccess({countries}))
       ),
       error: error => fetchCountriesError({error})
+    })
+  ));
+
+  fetchGeoJson$ = createEffect(() => this.actions$.pipe(
+    ofType(fetchGeoJson),
+    act({
+      project: () => this.dataService.getGeoJson().pipe(
+        map(geoJson => fetchGeoJsonSuccess({geoJson}))
+      ),
+      error: error => fetchGeoJsonError({error})
     })
   ));
 

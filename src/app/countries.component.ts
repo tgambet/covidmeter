@@ -38,7 +38,7 @@ import {getDataSet} from './utils';
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="standard" class="search">
+      <mat-form-field appearance="standard" class="search" floatLabel="always">
         <mat-label>Search</mat-label>
         <input matInput placeholder="Search by location" (keyup)="search($event.target)">
       </mat-form-field>

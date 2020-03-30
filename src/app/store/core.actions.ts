@@ -44,3 +44,17 @@ export const setMapScale = createAction(
   '[Core] Set Map Scale',
   props<{scale: 'linear' | 'log'}>()
 );
+
+export const fetchGeoJson = createAction(
+  '[Core] Fetch GeoJson'
+);
+
+export const fetchGeoJsonSuccess = createAction(
+  '[Core] Fetch GeoJson Success',
+  props<{geoJson: any}>()
+);
+
+export const fetchGeoJsonError = createAction(
+  '[Core] Fetch GeoJson Error',
+  props<{error: any}>()
+);

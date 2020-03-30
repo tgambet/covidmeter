@@ -7,6 +7,7 @@ export interface CoreState {
   sortBy: string;
   filterFrom: number;
   map: {
+    geoJson: any;
     dataType: string;
     scale: 'linear' | 'log'
   };
@@ -19,6 +20,7 @@ export const initialState: CoreState = {
   sortBy: 'cases',
   filterFrom: 10,
   map: {
+    geoJson: null,
     dataType: 'cases',
     scale: 'log'
   }

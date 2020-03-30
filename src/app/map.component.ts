@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {select, Store} from '@ngrx/store';
-import {getCountries, getMapDataType, getMapScale} from './store/core.selectors';
-import {map, tap} from 'rxjs/operators';
+import {getCountries, getGeoJson, getMapDataType, getMapScale} from './store/core.selectors';
+import {filter, map, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import * as d3 from 'd3';
 import {combineLatest, Observable, Subscription} from 'rxjs';
@@ -139,7 +139,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private httpClient: HttpClient,
   ) {
   }
 
@@ -212,7 +211,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }).addTo(this.world);
 
     const mainSub = combineLatest([
-      this.httpClient.get('/assets/countries.geo.json'),
+      this.store.pipe(select(getGeoJson), filter(json => !!json)),
       this.store.pipe(select(getCountries)),
       this.max$,
       this.dataType$,

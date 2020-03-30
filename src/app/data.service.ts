@@ -34,14 +34,10 @@ export class DataService {
   }
 
   getCountries(): Observable<Country[]> {
-    return this.httpClient.get('https://corona.lmao.ninja/countries').pipe(
-      map(countries => countries as Country[])
-    );
+    return this.httpClient.get('https://corona.lmao.ninja/countries') as Observable<Country[]>;
   }
 
-  getAll(): Observable<Country[]> {
-    return this.httpClient.get('https://corona.lmao.ninja/all').pipe(
-      map(countries => countries as Country[])
-    );
+  getGeoJson(): Observable<any> {
+    return this.httpClient.get('/assets/countries.geo.json');
   }
 }

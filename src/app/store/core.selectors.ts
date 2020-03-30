@@ -42,3 +42,8 @@ export const getMapScale = createSelector(
   selectCoreState,
   state => state.map.scale
 );
+
+export const getGeoJson = createSelector(
+  selectCoreState,
+  state => state.map.geoJson
+);
