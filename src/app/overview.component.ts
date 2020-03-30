@@ -76,8 +76,7 @@ export interface OverviewData {
       display: inline-block;
       margin-left: auto;
       height: 24px;
-      min-height: 0;
-      min-width: 0;
+      overflow: hidden;
     }
     h1 mat-icon {
       margin-left: auto;

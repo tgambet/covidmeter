@@ -6,13 +6,16 @@ import {fetchCountries} from './store/core.actions';
   selector: 'app-root',
   template: `
     <mat-toolbar>
-      <a routerLink="/">CovidMeter</a>
-      <button mat-icon-button routerLink="/">
+      <img src="/assets/logo.svg" height="40" width="40" alt="log" />
+      <a mat-icon-button routerLink="/">
         <mat-icon>sort</mat-icon>
-      </button>
-      <button mat-icon-button routerLink="map">
+      </a>
+      <a mat-icon-button routerLink="map">
         <mat-icon>map</mat-icon>
-      </button>
+      </a>
+      <a mat-icon-button routerLink="about">
+        <mat-icon>help</mat-icon>
+      </a>
     </mat-toolbar>
     <main>
       <router-outlet></router-outlet>
@@ -27,12 +30,20 @@ import {fetchCountries} from './store/core.actions';
     mat-toolbar {
       flex: 0 0 56px;
     }
+    img {
+      margin-right: auto;
+    }
     a {
       color: white;
+    }
+    a:not(:last-child) {
+      margin-right: 8px;
     }
     main {
       flex: 1 0 auto;
       width: 100%;
+      display: flex;
+      flex-direction: column;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush

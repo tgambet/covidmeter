@@ -26,7 +26,7 @@ import {setFilterFrom} from './store/core.actions';
   styles: [`
     :host {
       display: block;
-      padding: 16px;
+      padding: 16px 16px 100px 16px;
       max-width: 600px;
       margin: 0 auto;
     }

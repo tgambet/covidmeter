@@ -20,6 +20,8 @@ import {Country} from './data.service';
     :host {
       display: block;
       padding: 16px;
+      box-sizing: border-box;
+      width: 100%;
       max-width: 600px;
       margin: 0 auto;
     }`

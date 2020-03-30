@@ -25,8 +25,9 @@ import {CountriesComponent} from './countries.component';
 import {RouterModule, Routes} from '@angular/router';
 import {WorldComponent} from './world.component';
 import {CountryComponent} from './country.component';
-import { MapComponent } from './map.component';
+import {MapComponent} from './map.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {AboutComponent} from './about.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -52,6 +53,7 @@ const routes: Routes = [
   {path: '', component: WorldComponent},
   {path: 'country/:name', component: CountryComponent},
   {path: 'map', component: MapComponent},
+  {path: 'about', component: AboutComponent},
 ];
 
 @NgModule({
@@ -62,7 +64,8 @@ const routes: Routes = [
     CountriesComponent,
     WorldComponent,
     CountryComponent,
-    MapComponent
+    MapComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,

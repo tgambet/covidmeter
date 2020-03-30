@@ -83,16 +83,18 @@ import {getDataSet} from './utils';
       flex: 0 0 80px;
       margin: 0;
       padding: 0 8px 0 0;
-      font-size: 14px;
+      font-size: 12px;
       line-height: 1;
       font-weight: 400;
       text-align: right;
+      overflow: hidden;
+    }
+    h1 a {
+      display: block;
+      color: white;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-    h1 a {
-      color: white;
     }
     app-bar {
       flex: 1 1 auto;
@@ -114,8 +116,10 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sortBys = [
     {value: 'cases', viewValue: 'Number of cases'},
+    {value: 'deaths', viewValue: 'Number of deaths'},
+    {value: 'casesPerOneMillion', viewValue: 'Cases per million'},
+    {value: 'deathsPerOneMillion', viewValue: 'Deaths per million'},
     {value: 'mortality', viewValue: 'Mortality rate'},
-    {value: 'percentage', viewValue: 'Cases per million'},
   ];
 
   observer: IntersectionObserver;
@@ -157,10 +161,14 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
               switch (sortBy) {
                 case 'cases':
                   return b.cases - a.cases;
+                case 'deaths':
+                  return b.deaths - a.deaths;
                 case 'mortality':
                   return (b.deaths / b.cases) - (a.deaths / a.cases);
-                case 'percentage':
+                case 'casesPerOneMillion':
                   return b.casesPerOneMillion - a.casesPerOneMillion;
+                case 'deathsPerOneMillion':
+                  return b.deathsPerOneMillion - a.deathsPerOneMillion;
               }
             })
             .map(country => ({
