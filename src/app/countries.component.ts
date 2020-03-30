@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   QueryList,
@@ -60,6 +61,9 @@ import {MatDialog} from '@angular/material/dialog';
                     [flag]="data.country.countryInfo.flag">
       </app-overview>
     </ng-template>
+    <button mat-mini-fab class="top" color="primary" (click)="backToTop()" [class.visible]="showBackToTop">
+      <mat-icon>arrow_upward</mat-icon>
+    </button>
   `,
   styles: [`
     .controls {
@@ -108,6 +112,16 @@ import {MatDialog} from '@angular/material/dialog';
       flex: 1 1 auto;
       display: flex;
     }
+    .top {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+    .top.visible {
+      opacity: 1;
+    }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -136,6 +150,13 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   observer: IntersectionObserver;
 
   subscription: Subscription = new Subscription();
+
+  showBackToTop = false;
+
+  @HostListener('window:scroll')
+  resize() {
+    this.showBackToTop = window.scrollY !== 0;
+  }
 
   constructor(
     private store: Store,
@@ -268,5 +289,9 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
       maxWidth: '456px',
       data: {country, dataSet}
     });
+  }
+
+  backToTop() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
   }
 }
