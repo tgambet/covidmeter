@@ -163,14 +163,14 @@ $background-color: mat-color(map-get($dark-theme, background), background);
 // Global styles
 
 html, body {
-  height: 100%;
+  min-height: 100%;
+  color: $text-color;
+  background-color: $background-color;
 }
 
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  color: $text-color;
-  background-color: $background-color;
 }
 
 /*@import '~@angular/cdk/text-field';
@@ -198,3 +198,7 @@ input {
   display: none;
 }*/
 @import "~leaflet/dist/leaflet.css";
+
+.mat-dialog-container {
+  padding: 16px !important;
+}

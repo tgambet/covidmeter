@@ -6,6 +6,8 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
+  TemplateRef,
+  ViewChild,
   ViewChildren
 } from '@angular/core';
 import {combineLatest, Observable, Subscription} from 'rxjs';
@@ -15,6 +17,7 @@ import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from 
 import {setMaxCases, setNormalize, setSortBy} from './store/core.actions';
 import {map} from 'rxjs/operators';
 import {getDataSet} from './utils';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-countries',
@@ -44,11 +47,19 @@ import {getDataSet} from './utils';
       </mat-form-field>
     </div>
     <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
-      <div class="country" #countries [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country">
-        <h1><a [routerLink]="['country', data.country.country]">{{data.country.country}}</a></h1>
+      <div class="country" #countries
+           [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country"
+           (click)="openDialog(data.country, data.dataSet)">
+        <h1>{{data.country.country}}</h1>
         <app-bar [dataSet]="data.dataSet"></app-bar>
       </div>
     </ng-container>
+    <ng-template let-data #dialog>
+      <app-overview [label]="data.country.country"
+                    [data]="data.country"
+                    [flag]="data.country.countryInfo.flag">
+      </app-overview>
+    </ng-template>
   `,
   styles: [`
     .controls {
@@ -87,14 +98,11 @@ import {getDataSet} from './utils';
       line-height: 1;
       font-weight: 400;
       text-align: right;
-      overflow: hidden;
-    }
-    h1 a {
-      display: block;
       color: white;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-decoration: underline;
     }
     app-bar {
       flex: 1 1 auto;
@@ -107,6 +115,9 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChildren('countries')
   countries: QueryList<ElementRef>;
+
+  @ViewChild('dialog')
+  dialogRef: TemplateRef<any>;
 
   normalize$: Observable<boolean>;
   maxCases$: Observable<number>;
@@ -127,7 +138,8 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription: Subscription = new Subscription();
 
   constructor(
-    private store: Store
+    private store: Store,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -248,5 +260,13 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getDataSet(country: Country, normalize: boolean, max: number) {
     return getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max);
+  }
+
+  openDialog(country: Country, dataSet: { value: number; color: string }[]) {
+    this.dialog.open(this.dialogRef, {
+      width: '100%',
+      maxWidth: '456px',
+      data: {country, dataSet}
+    });
   }
 }

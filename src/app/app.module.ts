@@ -28,12 +28,13 @@ import {CountryComponent} from './country.component';
 import {MapComponent} from './map.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {AboutComponent} from './about.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
   MatButtonModule,
   // MatCheckboxModule,
-  // MatDialogModule,
+  MatDialogModule,
   MatDividerModule,
   MatIconModule,
   // MatMenuModule,

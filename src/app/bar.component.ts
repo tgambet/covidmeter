@@ -24,6 +24,7 @@ import {
   styles: [`
     svg {
       width: 100%;
+      display: block;
     }
     rect {
       transition: width ease 150ms, transform ease 150ms;
