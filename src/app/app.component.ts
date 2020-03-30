@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {fetchCountries, fetchGeoJson} from './store/core.actions';
+import {fromEvent, timer} from "rxjs";
+import {filter, repeatWhen, shareReplay, takeUntil, tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -56,7 +58,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(fetchCountries());
     this.store.dispatch(fetchGeoJson());
+
+    const visibilityChange$ = fromEvent(document, 'visibilitychange').pipe(
+      shareReplay({ refCount: true, bufferSize: 1 })
+    );
+    const pageVisible$ = visibilityChange$.pipe(
+      filter(() => document.visibilityState === 'visible')
+    );
+    const pageHidden$ = visibilityChange$.pipe(
+      filter(() => document.visibilityState === 'hidden')
+    );
+
+    timer(0, 1000 * 60).pipe(
+      tap(() => this.store.dispatch(fetchCountries())),
+      takeUntil(pageHidden$),
+      repeatWhen(() => pageVisible$)
+    ).subscribe();
   }
 }

@@ -1,6 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {fetchCountries} from './store/core.actions';
-import {Store} from '@ngrx/store';
 import {getDataSet} from './utils';
 
 export interface OverviewData {
@@ -58,7 +56,6 @@ export interface OverviewData {
             <span class="part">(+{{data.todayDeaths / (data.deaths - data.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
           </li>
         </ul>
-        <button mat-raised-button color="primary" class="update" (click)="updateData()">UPDATE</button>
       </mat-card>
   `,
   styles: [`
@@ -136,14 +133,6 @@ export interface OverviewData {
     ul.today .value {
       flex-basis: 50px;
     }
-    .update {
-      position: absolute;
-      right: 16px;
-      bottom: 16px;
-      margin-right: 0;
-      font-size: 12px;
-      font-weight: 500;
-    }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -159,15 +148,10 @@ export class OverviewComponent implements OnInit {
   data: OverviewData;
 
   constructor(
-    private store: Store
   ) {
   }
 
   ngOnInit(): void {
-  }
-
-  updateData() {
-    this.store.dispatch(fetchCountries());
   }
 
   getData(data: OverviewData) {
