@@ -11,8 +11,12 @@ import {Country, DataService} from './data.service';
   selector: 'app-country',
   template: `
     <ng-container *ngIf="country$ | async; let country">
-      <app-overview *ngIf="overview$ | async; let overview" [data]="overview"
-                    [flag]="country.countryInfo.flag" [label]="country.country">
+      <app-overview *ngIf="overview$ | async; let overview" [data]="overview">
+        <a mat-icon-button [routerLink]="['/']">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+        <span>{{country.country}} overview</span>
+        <img [src]="country.countryInfo.flag" alt="flag"/>
       </app-overview>
     </ng-container>
     <app-chart [data$]="data$" [colors]="['black', 'green', 'grey']" class="mat-elevation-z2"></app-chart>
@@ -26,6 +30,19 @@ import {Country, DataService} from './data.service';
       max-width: 600px;
       margin: 0 auto;
     }
+
+    a {
+      position: relative;
+      left: -8px;
+    }
+
+    img {
+      display: inline-block;
+      margin-left: auto;
+      height: 24px;
+      overflow: hidden;
+    }
+
     app-chart {
       margin-top: 16px;
     }
@@ -36,12 +53,12 @@ export class CountryComponent implements OnInit {
   country$: Observable<Country>;
   overview$: Observable<OverviewData>;
 
-  data$: Observable<{date: Date, values: number[]}[]>;
+  data$: Observable<{ date: Date, values: number[] }[]>;
 
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private dataService: DataService
+    private dataService: DataService,
   ) {
   }
 
@@ -103,5 +120,4 @@ export class CountryComponent implements OnInit {
       })
     );
   }
-
 }

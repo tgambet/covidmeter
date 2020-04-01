@@ -9,7 +9,10 @@ import {setFilterFrom} from './store/core.actions';
 @Component({
   selector: 'app-world',
   template: `
-    <app-overview [data]="overview$ | async" label="World"></app-overview>
+    <app-overview [data]="overview$ | async">
+      <span>World overview</span>
+      <mat-icon>language</mat-icon>
+    </app-overview>
     <h1>Overview by country</h1>
     <p>
       Show countries with
@@ -30,15 +33,22 @@ import {setFilterFrom} from './store/core.actions';
       max-width: 600px;
       margin: 0 auto;
     }
+
+    mat-icon {
+      margin-left: auto;
+    }
+
     h1 {
       font-size: 16px;
       font-weight: 500;
       margin: 16px 0 0 0;
     }
+
     p {
       font-size: 14px;
       margin-bottom: 0;
     }
+
     select {
       background-color: #303030;
       color: white;

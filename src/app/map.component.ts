@@ -3,7 +3,6 @@ import * as L from 'leaflet';
 import {select, Store} from '@ngrx/store';
 import {getCountries, getGeoJson, getMapDataType, getMapScale} from './store/core.selectors';
 import {filter, map, tap} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
 import * as d3 from 'd3';
 import {combineLatest, Observable, Subscription} from 'rxjs';
 import {setMapDataType, setMapScale} from './store/core.actions';
@@ -25,7 +24,7 @@ import {formatNumber} from '@angular/common';
       </ng-container>
     </div>
     <mat-accordion class="controls mat-elevation-z6">
-      <mat-expansion-panel>
+      <mat-expansion-panel #panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
             Data
@@ -33,7 +32,7 @@ import {formatNumber} from '@angular/common';
         </mat-expansion-panel-header>
         <mat-form-field>
           <mat-label>Data</mat-label>
-          <mat-select [value]="dataType$ | async" (valueChange)="setDataType($event)">
+          <mat-select [value]="dataType$ | async" (valueChange)="setDataType($event); panel.close()">
             <mat-option *ngFor="let dt of dataTypes" [value]="dt.value">
               {{dt.title}}
             </mat-option>
@@ -54,10 +53,12 @@ import {formatNumber} from '@angular/common';
       display: block;
       position: relative;
     }
+
     #map {
       width: 100%;
       height: calc(100vh - 56px);
     }
+
     .legend {
       width: 75px;
       position: absolute;
@@ -69,28 +70,33 @@ import {formatNumber} from '@angular/common';
       z-index: 400;
       display: flex;
     }
+
     h2 {
       position: absolute;
       top: 0;
       font-size: 12px;
       font-weight: 400;
     }
+
     .colors {
       height: 155px;
       width: 16px;
       background: linear-gradient(to top, #0ff, #0ff 5px, #0091ea 5px, #d50000);
     }
+
     .labels {
       height: 150px;
       display: flex;
       flex-direction: column;
       position: relative;
     }
+
     .label {
       font-size: 10px;
       line-height: 12px;
       position: absolute;
     }
+
     .controls {
       font-size: 12px;
       position: absolute;
@@ -102,9 +108,11 @@ import {formatNumber} from '@angular/common';
       display: flex;
       max-width: 240px;
     }
+
     mat-panel-title {
       font-size: 14px;
     }
+
     mat-form-field {
       width: 100%;
     }
@@ -128,7 +136,7 @@ export class MapComponent implements OnInit, OnDestroy {
     deathsPerOneMillion: number,
     mortality: number
   }>;
-  legend$: Observable<{title: string, labels: {label: string; bottom: number}[]}>;
+  legend$: Observable<{ title: string, labels: { label: string; bottom: number }[] }>;
   dataType$: Observable<string>;
   scale$: Observable<'linear' | 'log'>;
 
@@ -147,13 +155,13 @@ export class MapComponent implements OnInit, OnDestroy {
     this.max$ = this.store.pipe(
       select(getCountries),
       map(countries => countries.reduce((max, country) =>
-        ({
-          cases: Math.max(max.cases, country.cases),
-          deaths: Math.max(max.deaths, country.deaths),
-          casesPerOneMillion: Math.max(max.casesPerOneMillion, country.casesPerOneMillion),
-          deathsPerOneMillion: Math.max(max.deathsPerOneMillion, country.deathsPerOneMillion),
-          mortality: country.cases === 0 ? max.mortality : Math.max(max.mortality, country.deaths / country.cases * 100),
-        }),
+          ({
+            cases: Math.max(max.cases, country.cases),
+            deaths: Math.max(max.deaths, country.deaths),
+            casesPerOneMillion: Math.max(max.casesPerOneMillion, country.casesPerOneMillion),
+            deathsPerOneMillion: Math.max(max.deathsPerOneMillion, country.deathsPerOneMillion),
+            mortality: country.cases === 0 ? max.mortality : Math.max(max.mortality, country.deaths / country.cases * 100),
+          }),
         {
           cases: 0,
           deaths: 0,

@@ -50,16 +50,19 @@ export class BarComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       this.update();
       this.cdr.markForCheck();
-    }, 0);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // this.update();
     if (changes.dataSet) {
-      this.update();
+      requestAnimationFrame(() => {
+        this.update();
+        this.cdr.markForCheck();
+      });
     }
   }
 

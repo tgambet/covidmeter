@@ -8,7 +8,6 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
-  ViewChild,
   ViewChildren
 } from '@angular/core';
 import {combineLatest, Observable, Subscription} from 'rxjs';
@@ -18,7 +17,7 @@ import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from 
 import {setMaxCases, setNormalize, setSortBy} from './store/core.actions';
 import {map} from 'rxjs/operators';
 import {getDataSet} from './utils';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-countries',
@@ -48,19 +47,26 @@ import {MatDialog} from '@angular/material/dialog';
       </mat-form-field>
     </div>
     <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
+      <ng-template #dialog>
+        <app-overview [data]="data.country">
+          <button mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <span>{{data.country.country}} overview</span>
+          <a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
+            (show details)
+          </a>
+          <img [src]="data.country.countryInfo.flag" alt="flag"/>
+        </app-overview>
+      </ng-template>
       <div class="country" #countries
            [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country"
-           (click)="openDialog(data.country, data.dataSet)">
+           (click)="openDialog(dialog)">
         <h1>{{data.country.country}}</h1>
         <app-bar [dataSet]="data.dataSet"></app-bar>
       </div>
     </ng-container>
-    <ng-template let-data #dialog>
-      <app-overview [label]="data.country.country"
-                    [data]="data.country"
-                    [flag]="data.country.countryInfo.flag">
-      </app-overview>
-    </ng-template>
+
     <button mat-mini-fab class="top" color="primary" (click)="backToTop()" [class.visible]="showBackToTop">
       <mat-icon>arrow_upward</mat-icon>
     </button>
@@ -122,6 +128,21 @@ import {MatDialog} from '@angular/material/dialog';
     .top.visible {
       opacity: 1;
     }
+    app-overview img {
+      display: inline-block;
+      margin-left: auto;
+      height: 24px;
+      overflow: hidden;
+    }
+    app-overview button {
+      position: relative;
+      left: -8px;
+    }
+    .country-link {
+      margin-left: 8px;
+      font-size: 12px;
+      color: #aaa;
+    }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -129,9 +150,6 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChildren('countries')
   countries: QueryList<ElementRef>;
-
-  @ViewChild('dialog')
-  dialogRef: TemplateRef<any>;
 
   normalize$: Observable<boolean>;
   maxCases$: Observable<number>;
@@ -152,6 +170,8 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription: Subscription = new Subscription();
 
   showBackToTop = false;
+
+  private dialogRef: MatDialogRef<any>;
 
   @HostListener('window:scroll')
   resize() {
@@ -283,12 +303,17 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
     return getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max);
   }
 
-  openDialog(country: Country, dataSet: { value: number; color: string }[]) {
-    this.dialog.open(this.dialogRef, {
+  openDialog(dialogRef: TemplateRef<any>) {
+    this.dialogRef = this.dialog.open(dialogRef, {
       width: '100%',
       maxWidth: '456px',
-      data: {country, dataSet}
     });
+  }
+
+  closeDialog() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 
   backToTop() {
