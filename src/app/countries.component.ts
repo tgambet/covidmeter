@@ -52,7 +52,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
           <button mat-icon-button (click)="closeDialog()">
             <mat-icon>close</mat-icon>
           </button>
-          <span>{{data.country.country}} overview</span>
+          <span>{{data.country.country}}</span>
           <a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
             (show details)
           </a>

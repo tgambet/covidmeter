@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {fetchCountries, fetchGeoJson} from './store/core.actions';
+import {fetchCountries, fetchGeoJson, fetchHistorical} from './store/core.actions';
 import {fromEvent, timer} from 'rxjs';
 import {filter, repeatWhen, shareReplay, takeUntil, tap} from 'rxjs/operators';
 
@@ -81,6 +81,7 @@ export class AppComponent implements OnInit {
 
     timer(0, 1000 * 60).pipe(
       tap(() => this.store.dispatch(fetchCountries())),
+      tap(() => this.store.dispatch(fetchHistorical())),
       takeUntil(pageHidden$),
       repeatWhen(() => pageVisible$)
     ).subscribe();

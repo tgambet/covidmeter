@@ -2,7 +2,7 @@ import {ActionReducer, createReducer, on} from '@ngrx/store';
 import {CoreState, initialState} from './core.state';
 import {
   fetchCountriesSuccess,
-  fetchGeoJsonSuccess,
+  fetchGeoJsonSuccess, fetchHistoricalSuccess,
   setFilterFrom,
   setMapDataType,
   setMapScale,
@@ -36,5 +36,8 @@ export const coreReducer: ActionReducer<CoreState> = createReducer(
   )),
   on(fetchGeoJsonSuccess, (state, {geoJson}) => (
     {...state, map: {...state.map, geoJson}}
+  )),
+  on(fetchHistoricalSuccess, (state, {historical}) => (
+    {...state, historical}
   ))
 );

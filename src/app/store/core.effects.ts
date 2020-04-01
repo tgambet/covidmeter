@@ -7,7 +7,7 @@ import {
   fetchCountriesSuccess,
   fetchGeoJson,
   fetchGeoJsonError,
-  fetchGeoJsonSuccess
+  fetchGeoJsonSuccess, fetchHistorical, fetchHistoricalError, fetchHistoricalSuccess
 } from './core.actions';
 import {DataService} from '../data.service';
 import {map} from 'rxjs/operators';
@@ -39,6 +39,16 @@ export class CoreEffects {
         map(geoJson => fetchGeoJsonSuccess({geoJson}))
       ),
       error: error => fetchGeoJsonError({error})
+    })
+  ));
+
+  fetchHistorical$ = createEffect(() => this.actions$.pipe(
+    ofType(fetchHistorical),
+    act({
+      project: () => this.dataService.getHistorical().pipe(
+        map(historical => fetchHistoricalSuccess({historical}))
+      ),
+      error: error => fetchHistoricalError({error})
     })
   ));
 

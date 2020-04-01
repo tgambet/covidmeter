@@ -58,3 +58,17 @@ export const fetchGeoJsonError = createAction(
   '[Core] Fetch GeoJson Error',
   props<{error: any}>()
 );
+
+export const fetchHistorical = createAction(
+  '[Core] Fetch Historical'
+);
+
+export const fetchHistoricalSuccess = createAction(
+  '[Core] Fetch Historical Success',
+  props<{historical: any[]}>()
+);
+
+export const fetchHistoricalError = createAction(
+  '[Core] Fetch Historical Error',
+  props<{error: any}>()
+);

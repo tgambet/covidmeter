@@ -47,3 +47,8 @@ export const getGeoJson = createSelector(
   selectCoreState,
   state => state.map.geoJson
 );
+
+export const getHistorical = createSelector(
+  selectCoreState,
+  state => state.historical
+);

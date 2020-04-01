@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {filter, map, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
-import {getCountryByName} from './store/core.selectors';
+import {getCountryByName, getHistorical} from './store/core.selectors';
 import {combineLatest, Observable} from 'rxjs';
 import {OverviewData} from './overview.component';
-import {Country, DataService} from './data.service';
+import {Country} from './data.service';
 
 @Component({
   selector: 'app-country',
@@ -58,7 +58,6 @@ export class CountryComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private store: Store,
-    private dataService: DataService,
   ) {
   }
 
@@ -83,9 +82,7 @@ export class CountryComponent implements OnInit {
 
     this.data$ = combineLatest([
       this.country$,
-      this.dataService.getHistorical().pipe(
-        shareReplay(1)
-      )
+      this.store.pipe(select(getHistorical))
     ]).pipe(
       map(([country, array]) => array.filter(a => a.country === country.country).reduce((result, r) => {
         for (const date in r.timeline.cases) {

@@ -11,6 +11,7 @@ export interface CoreState {
     dataType: string;
     scale: 'linear' | 'log'
   };
+  historical: any[];
 }
 
 export const initialState: CoreState = {
@@ -23,5 +24,6 @@ export const initialState: CoreState = {
     geoJson: null,
     dataType: 'cases',
     scale: 'log'
-  }
+  },
+  historical: [],
 };
