@@ -2,7 +2,9 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {fetchCountries, fetchGeoJson, fetchHistorical} from './store/core.actions';
 import {fromEvent, timer} from 'rxjs';
-import {filter, repeatWhen, shareReplay, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, repeatWhen, shareReplay, takeUntil, tap} from 'rxjs/operators';
+import {SwUpdate} from '@angular/service-worker';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -62,11 +64,18 @@ import {filter, repeatWhen, shareReplay, takeUntil, tap} from 'rxjs/operators';
 export class AppComponent implements OnInit {
 
   constructor(
-    private store: Store
+    private store: Store,
+    private updates: SwUpdate,
+    private snackBar: MatSnackBar
   ) {
   }
 
   ngOnInit(): void {
+    this.updates.available.pipe(
+      concatMap(() => this.snackBar.open('A new version is available.', 'Reload').afterDismissed()),
+      tap(() => this.updates.activateUpdate().then(() => document.location.reload()))
+    ).subscribe();
+
     this.store.dispatch(fetchGeoJson());
 
     const visibilityChange$ = fromEvent(document, 'visibilitychange').pipe(

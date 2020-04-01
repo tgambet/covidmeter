@@ -30,6 +30,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {AboutComponent} from './about.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {ChartComponent} from './chart.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -48,7 +49,8 @@ const MATERIAL_MODULES = [
   MatSelectModule,
   MatCardModule,
   MatInputModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatSnackBarModule
 ];
 
 const routes: Routes = [

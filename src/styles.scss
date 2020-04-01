@@ -76,7 +76,7 @@ $dark-theme: (
 @include mat-toolbar-theme($dark-theme);
 // @include mat-tooltip-theme($dark-theme);
 // @include mat-tree-theme($dark-theme);
-// @include mat-snack-bar-theme($dark-theme);
+@include mat-snack-bar-theme($dark-theme);
 
 $text-color: mat-color(map-get($dark-theme, foreground), text);
 $background-color: mat-color(map-get($dark-theme, background), background);
