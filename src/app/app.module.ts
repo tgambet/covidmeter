@@ -29,6 +29,7 @@ import {MapComponent} from './map.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {AboutComponent} from './about.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import {ChartComponent} from './chart.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -66,7 +67,8 @@ const routes: Routes = [
     WorldComponent,
     CountryComponent,
     MapComponent,
-    AboutComponent
+    AboutComponent,
+    ChartComponent
   ],
   imports: [
     BrowserModule,

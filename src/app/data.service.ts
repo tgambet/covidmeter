@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
 
 export interface Country {
   country: string;
@@ -35,6 +34,10 @@ export class DataService {
 
   getCountries(): Observable<Country[]> {
     return this.httpClient.get('https://corona.lmao.ninja/countries') as Observable<Country[]>;
+  }
+
+  getHistorical(): Observable<any> {
+    return this.httpClient.get('https://corona.lmao.ninja/v2/historical');
   }
 
   getGeoJson(): Observable<any> {
