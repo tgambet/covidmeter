@@ -29,7 +29,7 @@ import * as d3 from 'd3';
   styles: [`
     svg {
       width: 100%;
-      display: inline-block;
+      display: block;
     }
 
     rect {

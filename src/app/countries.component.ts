@@ -13,10 +13,10 @@ import {
 import {combineLatest, Observable, Subscription} from 'rxjs';
 import {Country} from './data.service';
 import {select, Store} from '@ngrx/store';
-import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from './store/core.selectors';
+import {getCountries, getFilterFrom, getHistorical, getMaxCases, getNormalize, getSortBy} from './store/core.selectors';
 import {setMaxCases, setNormalize, setSortBy} from './store/core.actions';
 import {map} from 'rxjs/operators';
-import {getDataSet} from './utils';
+import {getDataSet, reduceTimeline, timelineToData} from './utils';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
@@ -48,14 +48,14 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
     </div>
     <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
       <ng-template #dialog>
-        <app-overview [data]="data.country">
+        <app-overview [data]="data.country" [chartData$]="data.chartData$">
           <button mat-icon-button (click)="closeDialog()">
             <mat-icon>close</mat-icon>
           </button>
           <span>{{data.country.country}}</span>
-          <a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
+          <!--<a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
             (show details)
-          </a>
+          </a>-->
           <img [src]="data.country.countryInfo.flag" alt="flag"/>
         </app-overview>
       </ng-template>
@@ -82,27 +82,30 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
       align-items: center;
       font-size: 14px;
     }
-    .controls button {
-    }
+
     .controls mat-form-field {
       flex: 0 1 auto;
       max-width: calc(50vw - 20px - 16px);
     }
+
     .sort {
       padding: 0 12px;
       box-sizing: border-box;
     }
+
     .controls .search {
       padding-right: 0;
     }
+
     .country {
       display: flex;
       align-items: center;
       margin-bottom: 8px;
-      padding: 6px;
+      padding: 8px 6px;
       border-radius: 4px;
       background-color: #424242;
     }
+
     .country h1 {
       flex: 0 0 80px;
       margin: 0;
@@ -116,10 +119,12 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     app-bar {
       flex: 1 1 auto;
       display: flex;
     }
+
     .top {
       position: fixed;
       bottom: 8px;
@@ -127,19 +132,23 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
       opacity: 0;
       transition: opacity 300ms ease;
     }
+
     .top.visible {
       opacity: 1;
     }
+
     app-overview img {
       display: inline-block;
       margin-left: auto;
       height: 24px;
       overflow: hidden;
     }
+
     app-overview button {
       position: relative;
       left: -8px;
     }
+
     .country-link {
       margin-left: 8px;
       font-size: 12px;
@@ -157,7 +166,12 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   maxCases$: Observable<number>;
   sortBy$: Observable<string>;
   countries$: Observable<Country[]>;
-  dataSets$: Observable<{country: Country; dataSet: {value: number; color: string}[], offsetRight: number}[]>;
+  dataSets$: Observable<{
+    country: Country;
+    dataSet: { value: number; color: string }[],
+    offsetRight: number,
+    chartData$: Observable<{ date: Date, values: number[] }[]>
+  }[]>;
 
   sortBys = [
     {value: 'cases', viewValue: 'Number of cases'},
@@ -183,7 +197,8 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private store: Store,
     private dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.countries$ = this.store.pipe(
@@ -222,14 +237,19 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
             .map(country => ({
               country,
               dataSet: getDataSet(country.cases, country.deaths, country.critical, country.recovered),
-              offsetRight: normalize ? 0 : Math.max(0, max - country.cases)
+              offsetRight: normalize ? 0 : Math.max(0, max - country.cases),
+              chartData$: this.store.pipe(
+                select(getHistorical),
+                map(array => reduceTimeline(array.filter(a => a.country === country.country))),
+                map(timelineToData)
+              )
             }))
         )
       );
 
     const options = {
       root: null,
-      rootMargin: `-${78 - 27}px 0px 0px 0px`,
+      rootMargin: `-${78 - 31}px 0px 0px 0px`,
       threshold: 1.0
     };
 

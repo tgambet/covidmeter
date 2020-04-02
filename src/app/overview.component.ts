@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {getDataSet} from './utils';
+import {Observable} from 'rxjs';
 
 export interface OverviewData {
   cases: number;
@@ -21,8 +22,11 @@ export interface OverviewData {
       <mat-divider></mat-divider>
       <ul class="overview">
         <li>
-          <span class="label">Cases</span>
-          <span class="value">{{data.cases | number}}</span>
+          <span class="label active">Mild cases</span>
+          <span class="value">{{data.cases - data.recovered - data.critical - data.deaths | number}}</span>
+          <span class="part">
+            ({{(data.cases - data.recovered - data.critical - data.deaths) / data.cases * 100 | number:'1.0-1'}}%)
+          </span>
         </li>
         <li>
           <span class="label recovered">Recovered</span>
@@ -39,21 +43,29 @@ export interface OverviewData {
           <span class="value">{{data.deaths | number}}</span>
           <span class="part">({{data.deaths / data.cases * 100 | number:'1.0-1'}}%)</span>
         </li>
+        <li class="total">
+          <span class="label">Total</span>
+          <span class="value">{{data.cases | number}}</span>
+        </li>
       </ul>
+      <h2>Overall progression</h2>
       <app-bar [dataSet]="getData(data)"></app-bar>
-<!--      <p class="today">Today:</p>
-      <ul class="today">
-        <li>
-          <span class="label">Cases</span>
-          <span class="value">{{data.todayCases | number}}</span>
-          <span class="part">(+{{data.todayCases / (data.cases - data.todayCases) * 100 | number:'1.0-1'}}%)</span>
-        </li>
-        <li>
-          <span class="label">Deaths</span>
-          <span class="value">{{data.todayDeaths | number}}</span>
-          <span class="part">(+{{data.todayDeaths / (data.deaths - data.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
-        </li>
-      </ul>-->
+      <h2>Timeline</h2>
+      <app-chart [data$]="chartData$" [colors]="['black', '#4caf50', '#9e9e9e']"></app-chart>
+
+      <!--      <p class="today">Today:</p>
+            <ul class="today">
+              <li>
+                <span class="label">Cases</span>
+                <span class="value">{{data.todayCases | number}}</span>
+                <span class="part">(+{{data.todayCases / (data.cases - data.todayCases) * 100 | number:'1.0-1'}}%)</span>
+              </li>
+              <li>
+                <span class="label">Deaths</span>
+                <span class="value">{{data.todayDeaths | number}}</span>
+                <span class="part">(+{{data.todayDeaths / (data.deaths - data.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
+              </li>
+            </ul>-->
     </mat-card>
   `,
   styles: [`
@@ -72,6 +84,17 @@ export interface OverviewData {
       min-height: 40px;
     }
 
+    h2 {
+      font-size: 14px;
+      font-weight: 400;
+      margin: 0 0 12px 0;
+    }
+
+    app-bar {
+      display: block;
+      margin-bottom: 16px;
+    }
+
     .overview {
       list-style: none;
       margin: 0;
@@ -82,6 +105,7 @@ export interface OverviewData {
       display: flex;
       align-items: center;
       margin-bottom: 4px;
+      font-weight: 300;
     }
 
     .label {
@@ -91,20 +115,28 @@ export interface OverviewData {
       box-sizing: border-box;
     }
 
+    .label {
+      border-right: 8px solid transparent;
+    }
+
+    .label.active {
+      border-right: 8px solid #9E9E9E;
+    }
+
     .label.recovered {
-      border-left: 8px solid #4caf50;
+      border-right: 8px solid #4caf50;
     }
 
     .label.critical {
-      border-left: 8px solid #ff5722;
+      border-right: 8px solid #ff5722;
     }
 
     .label.deaths {
-      border-left: 8px solid black;
+      border-right: 8px solid black;
     }
 
     .value {
-      flex: 0 0 60px;
+      flex: 0 0 75px;
       text-align: right;
       padding-right: 8px;
     }
@@ -115,31 +147,10 @@ export interface OverviewData {
       font-weight: 300;
     }
 
-    p.today {
-      margin-bottom: 4px;
-    }
-
-    ul.today {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    ul.today li {
-      display: flex;
-      margin-bottom: 4px;
-    }
-
-    ul.today li:last-child {
+    .overview .total {
+      margin-top: 8px;
       margin-bottom: 0;
-    }
-
-    ul.today .label {
-      flex-basis: 75px;
-    }
-
-    ul.today .value {
-      flex-basis: 50px;
+      font-weight: 700;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -149,8 +160,8 @@ export class OverviewComponent implements OnInit {
   @Input()
   data: OverviewData;
 
-  constructor() {
-  }
+  @Input()
+  chartData$: Observable<{ date: Date, values: number[] }[]>;
 
   ngOnInit(): void {
   }

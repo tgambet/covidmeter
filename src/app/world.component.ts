@@ -1,15 +1,16 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
-import {getCountries, getFilterFrom} from './store/core.selectors';
+import {getCountries, getFilterFrom, getHistorical} from './store/core.selectors';
 import {filter, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {OverviewData} from './overview.component';
 import {setFilterFrom} from './store/core.actions';
+import {reduceTimeline, timelineToData} from './utils';
 
 @Component({
   selector: 'app-world',
   template: `
-    <app-overview [data]="overview$ | async">
+    <app-overview *ngIf="overview$ | async" [data]="overview$ | async" [chartData$]="chartData$">
       <span>World overview</span>
       <mat-icon>language</mat-icon>
     </app-overview>
@@ -61,6 +62,7 @@ import {setFilterFrom} from './store/core.actions';
 export class WorldComponent implements OnInit {
 
   overview$: Observable<OverviewData>;
+  chartData$: Observable<{ date: Date, values: number[] }[]>;
   filterFrom$: Observable<number>;
 
   constructor(
@@ -85,6 +87,12 @@ export class WorldComponent implements OnInit {
 
     this.filterFrom$ = this.store.pipe(
       select(getFilterFrom)
+    );
+
+    this.chartData$ = this.store.pipe(
+      select(getHistorical),
+      map(reduceTimeline),
+      map(timelineToData)
     );
   }
 

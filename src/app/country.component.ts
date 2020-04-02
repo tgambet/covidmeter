@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {filter, map, switchMap, tap} from 'rxjs/operators';
+import {filter, map, switchMap} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
 import {getCountryByName, getHistorical} from './store/core.selectors';
 import {combineLatest, Observable} from 'rxjs';
 import {OverviewData} from './overview.component';
 import {Country} from './data.service';
+import {timelineToData} from './utils';
 
 @Component({
   selector: 'app-country',
@@ -19,7 +20,7 @@ import {Country} from './data.service';
         <img [src]="country.countryInfo.flag" alt="flag"/>
       </app-overview>
     </ng-container>
-    <app-chart [data$]="data$" [colors]="['black', 'green', 'grey']" class="mat-elevation-z2"></app-chart>
+    <app-chart [data$]="data$" [colors]="['black', '#4caf50', '#9e9e9e']" class="mat-elevation-z2"></app-chart>
   `,
   styles: [`
     :host {
@@ -98,23 +99,8 @@ export class CountryComponent implements OnInit {
         deaths: {},
         recovered: {}
       })),
-      tap(console.log),
       filter(c => !!c),
-      map(t => {
-        let datas = [];
-        for (const key in t.cases) {
-          if (t.cases.hasOwnProperty(key)) {
-            datas = [
-              ...datas,
-              {
-                date: new Date(key),
-                values: [t.deaths[key], t.recovered[key], t.cases[key] - t.deaths[key] - t.recovered[key]]
-              }
-            ];
-          }
-        }
-        return datas.filter(data => data.values.reduce((total, d) => total + d, 0) > 0);
-      })
+      map(timelineToData)
     );
   }
 }
