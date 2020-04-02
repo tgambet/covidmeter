@@ -5,6 +5,7 @@ import {fromEvent, timer} from 'rxjs';
 import {concatMap, filter, repeatWhen, shareReplay, takeUntil, tap} from 'rxjs/operators';
 import {SwUpdate} from '@angular/service-worker';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {NavigationEnd, Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -66,11 +67,18 @@ export class AppComponent implements OnInit {
   constructor(
     private store: Store,
     private updates: SwUpdate,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
   }
 
   ngOnInit(): void {
+    this.router.events.subscribe((evt) => {
+      if (evt instanceof NavigationEnd) {
+        window.scrollTo(0, 0);
+      }
+    });
+
     this.updates.available.pipe(
       concatMap(() => this.snackBar.open('A new version is available.', 'Reload').afterDismissed()),
       tap(() => this.updates.activateUpdate().then(() => document.location.reload()))
