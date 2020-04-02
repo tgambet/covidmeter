@@ -19,7 +19,7 @@ export const initialState: CoreState = {
   normalize: false,
   maxCases: 0,
   sortBy: 'cases',
-  filterFrom: 10,
+  filterFrom: 100,
   map: {
     geoJson: null,
     dataType: 'cases',

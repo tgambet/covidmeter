@@ -56,6 +56,7 @@ import {map, startWith} from 'rxjs/operators';
     .axis text {
       font-size: 10px;
       line-height: 1;
+      shape-rendering: crispEdges;
     }
 
     .x.axis text {

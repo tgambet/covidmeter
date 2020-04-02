@@ -59,11 +59,11 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
           <img [src]="data.country.countryInfo.flag" alt="flag"/>
         </app-overview>
       </ng-template>
-      <div class="country" #countries
+      <div class="country mat-elevation-z2" #countries
            [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country"
            (click)="openDialog(dialog)">
         <h1>{{data.country.country}}</h1>
-        <app-bar [dataSet]="data.dataSet"></app-bar>
+        <app-bar [dataSet]="data.dataSet" [offsetRight]="data.offsetRight" [showTotal]="true"></app-bar>
       </div>
     </ng-container>
 
@@ -76,8 +76,8 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
       background-color: #303030;
       position: sticky;
       top: 0;
-      margin: 0;
-      padding: 8px 0 0 0;
+      margin: 0 -8px;
+      padding: 8px 8px 0 8px;
       display: flex;
       align-items: center;
       font-size: 14px;
@@ -98,7 +98,10 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
     .country {
       display: flex;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+      padding: 6px;
+      border-radius: 4px;
+      background-color: #424242;
     }
     .country h1 {
       flex: 0 0 80px;
@@ -112,7 +115,6 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-decoration: underline;
     }
     app-bar {
       flex: 1 1 auto;
@@ -155,7 +157,7 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   maxCases$: Observable<number>;
   sortBy$: Observable<string>;
   countries$: Observable<Country[]>;
-  dataSets$: Observable<{country: Country; dataSet: {value: number; color: string}[]}[]>;
+  dataSets$: Observable<{country: Country; dataSet: {value: number; color: string}[], offsetRight: number}[]>;
 
   sortBys = [
     {value: 'cases', viewValue: 'Number of cases'},
@@ -208,33 +210,26 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
       combineLatest([this.countries$, this.normalize$, this.maxCases$, this.sortBy$, filterFrom$]).pipe(
         map(([countries, normalize, max, sortBy, filterFrom]) =>
           countries
-            .filter(country => country.deaths >= filterFrom)
+            .filter(country => country.cases > filterFrom)
             .slice()
             .sort((a, b) => {
-              switch (sortBy) {
-                case 'cases':
-                  return b.cases - a.cases;
-                case 'deaths':
-                  return b.deaths - a.deaths;
-                case 'mortality':
-                  return (b.deaths / b.cases) - (a.deaths / a.cases);
-                case 'casesPerOneMillion':
-                  return b.casesPerOneMillion - a.casesPerOneMillion;
-                case 'deathsPerOneMillion':
-                  return b.deathsPerOneMillion - a.deathsPerOneMillion;
+              if (sortBy === 'mortality') {
+                return (b.deaths / b.cases) - (a.deaths / a.cases);
+              } else {
+                return b[sortBy] - a[sortBy];
               }
             })
             .map(country => ({
-                country,
-                dataSet: this.getDataSet(country, normalize, max)
-              })
-            )
+              country,
+              dataSet: getDataSet(country.cases, country.deaths, country.critical, country.recovered),
+              offsetRight: normalize ? 0 : Math.max(0, max - country.cases)
+            }))
         )
       );
 
     const options = {
       root: null,
-      rootMargin: `-${78 - 15}px 0px 0px 0px`,
+      rootMargin: `-${78 - 27}px 0px 0px 0px`,
       threshold: 1.0
     };
 
@@ -299,14 +294,11 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  getDataSet(country: Country, normalize: boolean, max: number) {
-    return getDataSet(country.cases, country.deaths, country.critical, country.recovered, normalize, max);
-  }
-
   openDialog(dialogRef: TemplateRef<any>) {
     this.dialogRef = this.dialog.open(dialogRef, {
       width: '100%',
       maxWidth: '456px',
+      autoFocus: false
     });
   }
 

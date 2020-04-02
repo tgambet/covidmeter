@@ -10,24 +10,36 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-bar',
   template: `
     <svg height="15" #svg>
-      <ng-container *ngFor="let point of displaySet; trackBy: trackByFn">
+      <ng-container *ngFor="let point of displaySet; last as last; trackBy: trackByFn">
         <rect height="15" [attr.width]="point.length > 0 ? point.length : 0"
-              [attr.fill]="point.color" attr.transform="translate({{point.offset}}, 0)"></rect>
+              [attr.fill]="point.color" attr.transform="translate({{point.offset}}, 0)">
+        </rect>
+        <text *ngIf="last && showTotal" attr.transform="translate({{point.offset + point.length + 5}}, 0)" dy="11">
+          {{this.label}}
+        </text>
       </ng-container>
     </svg>
   `,
   styles: [`
     svg {
       width: 100%;
-      display: block;
+      display: inline-block;
     }
+
     rect {
       transition: width ease 150ms, transform ease 150ms;
+    }
+
+    text {
+      fill: white;
+      font-size: 10px;
+      transition: transform ease 150ms;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -38,16 +50,25 @@ export class BarComponent implements OnInit, OnChanges {
   svg: ElementRef;
 
   @Input()
-  dataSet: {value: number; color: string}[] = [];
+  dataSet: { value: number; color: string }[] = [];
 
-  displaySet: {length: number; offset: number; color: string}[] = [];
+  @Input()
+  offsetRight = 0;
+
+  @Input()
+  showTotal = false;
+
+  displaySet: { length: number; offset: number; color: string }[] = [];
 
   total = 0;
   length = 0;
 
+  label: string;
+
   constructor(
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     requestAnimationFrame(() => {
@@ -57,8 +78,7 @@ export class BarComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.update();
-    if (changes.dataSet) {
+    if (changes.offsetRight || changes.dataSet) {
       requestAnimationFrame(() => {
         this.update();
         this.cdr.markForCheck();
@@ -68,18 +88,19 @@ export class BarComponent implements OnInit, OnChanges {
 
   @HostListener('window:resize')
   update() {
-    this.length = this.svg.nativeElement.clientWidth;
+    this.length = this.svg.nativeElement.clientWidth - (this.showTotal ? 30 : 0);
     this.total = this.dataSet.reduce((r, point) => r + point.value, 0);
     let offset = 0;
     this.displaySet = this.dataSet.map(point => {
       const result = {
-        length: this.total === 0 ? 0 : point.value * this.length / this.total,
+        length: this.total === 0 ? 0 : point.value * this.length / (this.total + this.offsetRight),
         offset,
         color: point.color
       };
       offset += result.length;
       return result;
     });
+    this.label = d3.format('.3s')(this.total);
   }
 
   trackByFn(index, item) {

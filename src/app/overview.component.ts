@@ -41,7 +41,7 @@ export interface OverviewData {
         </li>
       </ul>
       <app-bar [dataSet]="getData(data)"></app-bar>
-      <p class="today">Today:</p>
+<!--      <p class="today">Today:</p>
       <ul class="today">
         <li>
           <span class="label">Cases</span>
@@ -53,7 +53,7 @@ export interface OverviewData {
           <span class="value">{{data.todayDeaths | number}}</span>
           <span class="part">(+{{data.todayDeaths / (data.deaths - data.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
         </li>
-      </ul>
+      </ul>-->
     </mat-card>
   `,
   styles: [`
@@ -80,11 +80,12 @@ export interface OverviewData {
 
     .overview li {
       display: flex;
+      align-items: center;
       margin-bottom: 4px;
     }
 
     .label {
-      flex: 0 0 110px;
+      flex: 0 0 45%;
       text-align: right;
       padding-right: 8px;
       box-sizing: border-box;
@@ -155,6 +156,6 @@ export class OverviewComponent implements OnInit {
   }
 
   getData(data: OverviewData) {
-    return getDataSet(data.cases, data.deaths, data.critical, data.recovered, true);
+    return getDataSet(data.cases, data.deaths, data.critical, data.recovered);
   }
 }

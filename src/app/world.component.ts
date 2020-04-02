@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
 import {getCountries, getFilterFrom} from './store/core.selectors';
-import {map} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {OverviewData} from './overview.component';
 import {setFilterFrom} from './store/core.actions';
@@ -14,17 +14,17 @@ import {setFilterFrom} from './store/core.actions';
       <mat-icon>language</mat-icon>
     </app-overview>
     <h1>Overview by country</h1>
+    <app-countries></app-countries>
     <p>
-      Show countries with
+      Show countries with more than
       <select [value]="filterFrom$ | async" (change)="setFilterFrom($event.target)">
         <option>100</option>
         <option>50</option>
         <option>10</option>
         <option>0</option>
       </select>
-      or more deaths.
+      cases.
     </p>
-    <app-countries></app-countries>
   `,
   styles: [`
     :host {
@@ -45,7 +45,7 @@ import {setFilterFrom} from './store/core.actions';
     }
 
     p {
-      font-size: 14px;
+      font-size: 12px;
       margin-bottom: 0;
     }
 
@@ -60,8 +60,6 @@ import {setFilterFrom} from './store/core.actions';
 })
 export class WorldComponent implements OnInit {
 
-  from = 10;
-
   overview$: Observable<OverviewData>;
   filterFrom$: Observable<number>;
 
@@ -73,6 +71,7 @@ export class WorldComponent implements OnInit {
   ngOnInit(): void {
     this.overview$ = this.store.pipe(
       select(getCountries),
+      filter(countries => countries.length > 0),
       map(countries => countries.reduce((result, country) => ({
         cases: result.cases + country.cases,
         todayCases: result.todayCases + country.todayCases,
