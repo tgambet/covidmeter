@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {select, Store} from '@ngrx/store';
 import {getCountries, getGeoJson, getMapDataType, getMapScale} from './store/core.selectors';
@@ -23,6 +23,17 @@ import {formatNumber} from '@angular/common';
         </div>
       </ng-container>
     </div>
+    <div class="zoom mat-elevation-z6">
+      <button mat-icon-button (click)="toggleFullScreen()">
+        <mat-icon>{{fullScreen ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
+      </button>
+      <button mat-icon-button (click)="map.zoomIn()">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button mat-icon-button (click)="map.zoomOut()">
+        <mat-icon>remove</mat-icon>
+      </button>
+    </div>
     <mat-accordion class="controls mat-elevation-z6">
       <mat-expansion-panel #panel>
         <mat-expansion-panel-header>
@@ -40,7 +51,7 @@ import {formatNumber} from '@angular/common';
         </mat-form-field>
         <mat-form-field>
           <mat-label>Scale</mat-label>
-          <mat-select [value]="scale$ | async" (valueChange)="setScale($event)">
+          <mat-select [value]="scale$ | async" (valueChange)="setScale($event); panel.close()">
             <mat-option value="log">Logarithmic</mat-option>
             <mat-option value="linear">Linear</mat-option>
           </mat-select>
@@ -54,9 +65,21 @@ import {formatNumber} from '@angular/common';
       position: relative;
     }
 
+    :host.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
     #map {
       width: 100%;
       height: calc(100vh - 56px);
+    }
+
+    :host.fullscreen #map {
+      height: 100%;
     }
 
     .legend {
@@ -69,6 +92,17 @@ import {formatNumber} from '@angular/common';
       border-radius: 4px;
       z-index: 400;
       display: flex;
+    }
+
+    .zoom {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background-color: #303030;
+      border-radius: 4px;
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
     }
 
     h2 {
@@ -121,6 +155,9 @@ import {formatNumber} from '@angular/common';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
+  @HostBinding('class.fullscreen')
+  fullScreen = false;
+
   dataTypes: any[] = [
     {title: 'Number of cases', value: 'cases'},
     {title: 'Number of deaths', value: 'deaths'},
@@ -140,20 +177,26 @@ export class MapComponent implements OnInit, OnDestroy {
   dataType$: Observable<string>;
   scale$: Observable<'linear' | 'log'>;
 
-  world: L.Map;
+  map: L.Map;
   geoJson: L.GeoJSON;
 
   subscription: Subscription = new Subscription();
 
   constructor(
-    private store: Store,
+    private store: Store
   ) {
   }
 
   ngOnInit(): void {
 
-    this.max$ = this.store.pipe(
+    const mainCountries$ = this.store.pipe(
       select(getCountries),
+      map(countries => countries.filter(
+        c => c.cases * 1000000 / c.casesPerOneMillion > 100000
+      ))
+    );
+
+    this.max$ = mainCountries$.pipe(
       map(countries => countries.reduce((max, country) =>
           ({
             cases: Math.max(max.cases, country.cases),
@@ -190,15 +233,31 @@ export class MapComponent implements OnInit, OnDestroy {
         const unit = dataType === 'mortality' ? '%' : '';
         let labels;
         if (scale === 'log') {
-          labels = [...Array(Math.ceil(maxValue === 0 ? 0 : Math.log10(maxValue))).keys()].map(i => ({
-            label: formatNumber(Math.pow(10, i), 'en', '1.0-0') + unit,
-            bottom: i / Math.log10(maxValue) * 150
+
+          const logScale = d3.scaleLog()
+            .domain([1, maxValue])
+            .range([0, 150]);
+
+          const ticks = logScale.ticks(10);
+
+          labels = ticks.map((i, index) => ({
+            label: (index % 9 === 0 || index === ticks.length - 1) ? formatNumber(i, 'en', '1.0-0') + unit : '',
+            bottom: logScale(i)
           }));
+
         } else {
-          labels = [...Array(5).keys()].map(i => ({
-            label: formatNumber(maxValue / 4 * i, 'en', '1.0-0') + unit,
-            bottom: i / 4 * 150
+
+          const linearScale = d3.scaleLinear()
+            .domain([0, maxValue])
+            .range([0, 150]);
+
+          const ticks = linearScale.ticks(10);
+
+          labels = ticks.map(i => ({
+            label: formatNumber(i, 'en', '1.0-0') + unit,
+            bottom: linearScale(i)
           }));
+
         }
         return {
           title: this.dataTypes.find(dt => dt.value === dataType)?.title,
@@ -207,20 +266,25 @@ export class MapComponent implements OnInit, OnDestroy {
       }),
     );
 
-    this.world = L.map('map').setView([20, 0], 2);
+    this.map = L.map('map', {
+      zoomControl: false,
+      attributionControl: false,
+      minZoom: 1,
+      maxZoom: 9
+    }).setView([30, 0], 2);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    /*L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors ' +
         '&copy; <a href="https://carto.com/attributions">CARTO</a>',
       // subdomains: 'abcd',
       maxZoom: 9,
       minZoom: 2,
-    }).addTo(this.world);
+    }).addTo(this.world);*/
 
     const mainSub = combineLatest([
       this.store.pipe(select(getGeoJson), filter(json => !!json)),
-      this.store.pipe(select(getCountries)),
+      mainCountries$,
       this.max$,
       this.dataType$,
       this.scale$
@@ -277,9 +341,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
   updateMap(geoJson): void {
     if (this.geoJson) {
-      this.geoJson.removeFrom(this.world);
+      this.geoJson.removeFrom(this.map);
     }
-    this.geoJson = geoJson.addTo(this.world);
+    this.geoJson = geoJson.addTo(this.map);
   }
 
   getColor(value: number, max: number, scale: 'linear' | 'log'): string {
@@ -296,4 +360,10 @@ export class MapComponent implements OnInit, OnDestroy {
   setDataType(dataType: string) {
     this.store.dispatch(setMapDataType({dataType}));
   }
+
+  toggleFullScreen() {
+    this.fullScreen = !this.fullScreen;
+    requestAnimationFrame(() => this.map.invalidateSize());
+  }
+
 }

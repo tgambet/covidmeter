@@ -284,7 +284,9 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
         Math.max(m, +country.nativeElement.getAttribute('data-max')) :
         m;
     }, 0);
-    this.store.dispatch(setMaxCases({maxCases: max}));
+    if (max !== 0) {
+      this.store.dispatch(setMaxCases({maxCases: max}));
+    }
   }
 
   trackByFn(index: number, item) {
