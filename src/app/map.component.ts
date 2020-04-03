@@ -83,12 +83,12 @@ import {formatNumber} from '@angular/common';
     }
 
     .legend {
-      width: 75px;
+      width: 60px;
       position: absolute;
       bottom: 8px;
       left: 8px;
       background-color: #303030;
-      padding: 45px 8px 12px 8px;
+      padding: 34px 8px 12px 8px;
       border-radius: 4px;
       z-index: 400;
       display: flex;
@@ -159,11 +159,11 @@ export class MapComponent implements OnInit, OnDestroy {
   fullScreen = false;
 
   dataTypes: any[] = [
-    {title: 'Number of cases', value: 'cases'},
-    {title: 'Number of deaths', value: 'deaths'},
-    {title: 'Cases per million', value: 'casesPerOneMillion'},
-    {title: 'Deaths per million', value: 'deathsPerOneMillion'},
-    {title: 'Mortality rate', value: 'mortality'},
+    {title: 'Number of cases', value: 'cases', short: 'Cases'},
+    {title: 'Number of deaths', value: 'deaths', short: 'Deaths'},
+    {title: 'Cases per million', value: 'casesPerOneMillion', short: 'Cases/1M'},
+    {title: 'Deaths per million', value: 'deathsPerOneMillion', short: 'Deaths/1M'},
+    {title: 'Mortality rate', value: 'mortality', short: 'Mortality'},
   ];
 
   max$: Observable<{
@@ -241,7 +241,7 @@ export class MapComponent implements OnInit, OnDestroy {
           const ticks = logScale.ticks(10);
 
           labels = ticks.map((i, index) => ({
-            label: (index % 9 === 0 || index === ticks.length - 1) ? formatNumber(i, 'en', '1.0-0') + unit : '',
+            label: (index % 9 === 0 || index === ticks.length - 1) ? d3.format('.2s')(i) + unit : '',
             bottom: logScale(i)
           }));
 
@@ -254,13 +254,13 @@ export class MapComponent implements OnInit, OnDestroy {
           const ticks = linearScale.ticks(10);
 
           labels = ticks.map(i => ({
-            label: formatNumber(i, 'en', '1.0-0') + unit,
+            label: d3.format('.2s')(i) + unit,
             bottom: linearScale(i)
           }));
 
         }
         return {
-          title: this.dataTypes.find(dt => dt.value === dataType)?.title,
+          title: this.dataTypes.find(dt => dt.value === dataType)?.short,
           labels
         };
       }),
