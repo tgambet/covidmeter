@@ -2,25 +2,23 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {filter, map, switchMap} from 'rxjs/operators';
 import {select, Store} from '@ngrx/store';
-import {getCountryByName, getHistorical} from './store/core.selectors';
-import {combineLatest, Observable} from 'rxjs';
-import {OverviewData} from './overview.component';
+import {getCountryByName} from './store/core.selectors';
+import {Observable} from 'rxjs';
 import {Country} from './data.service';
-import {timelineToData} from './utils';
 
 @Component({
   selector: 'app-country',
   template: `
     <ng-container *ngIf="country$ | async; let country">
-      <app-overview *ngIf="overview$ | async; let overview" [data]="overview">
+      <app-overview [countryName]="country.country">
         <a mat-icon-button [routerLink]="['/']">
           <mat-icon>arrow_back</mat-icon>
         </a>
         <span>{{country.country}} overview</span>
         <img [src]="country.countryInfo.flag" alt="flag"/>
       </app-overview>
+      <app-timeline [countryName]="country.country"></app-timeline>
     </ng-container>
-    <app-chart [data$]="data$" [colors]="['black', '#4caf50', '#9e9e9e']" class="mat-elevation-z2"></app-chart>
   `,
   styles: [`
     :host {
@@ -44,7 +42,8 @@ import {timelineToData} from './utils';
       overflow: hidden;
     }
 
-    app-chart {
+    app-timeline {
+      display: block;
       margin-top: 16px;
     }
   `]
@@ -52,9 +51,6 @@ import {timelineToData} from './utils';
 export class CountryComponent implements OnInit {
 
   country$: Observable<Country>;
-  overview$: Observable<OverviewData>;
-
-  data$: Observable<{ date: Date, values: number[] }[]>;
 
   constructor(
     private route: ActivatedRoute,
@@ -67,30 +63,6 @@ export class CountryComponent implements OnInit {
       map(params => params.get('name')),
       switchMap(name => this.store.pipe(select(getCountryByName, name))),
       filter(country => !!country),
-    );
-
-    this.overview$ = this.country$;
-
-    this.data$ = combineLatest([
-      this.country$,
-      this.store.pipe(select(getHistorical))
-    ]).pipe(
-      map(([country, array]) => array.filter(a => a.country === country.country).reduce((result, r) => {
-        for (const date in r.timeline.cases) {
-          if (r.timeline.cases.hasOwnProperty(date)) {
-            result.cases[date] = r.timeline.cases[date] + (result.cases[date] || 0);
-            result.deaths[date] = r.timeline.deaths[date] + (result.deaths[date] || 0);
-            result.recovered[date] = r.timeline.recovered[date] + (result.recovered[date] || 0);
-          }
-        }
-        return result;
-      }, {
-        cases: {},
-        deaths: {},
-        recovered: {}
-      })),
-      filter(c => !!c),
-      map(timelineToData)
     );
   }
 }

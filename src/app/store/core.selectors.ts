@@ -52,3 +52,18 @@ export const getHistorical = createSelector(
   selectCoreState,
   state => state.historical
 );
+
+export const getYesterdayCountryByName = createSelector(
+  selectCoreState,
+  (state, name: string) => state.yesterdayCountries.find(c => c.country === name)
+);
+
+export const getWorld = createSelector(
+  selectCoreState,
+  state => state.world
+);
+
+export const getYesterdayWorld = createSelector(
+  selectCoreState,
+  state => state.yesterdayWorld
+);

@@ -1,5 +1,5 @@
 import {createAction, props} from '@ngrx/store';
-import {Country} from '../data.service';
+import {Country, OverviewData} from '../data.service';
 
 export const fetchCountries = createAction(
   '[Core] Fetch Countries'
@@ -11,7 +11,7 @@ export const fetchCountriesSuccess = createAction(
 );
 
 export const fetchCountriesError = createAction(
-  '[Core] Fetch Countries Success',
+  '[Core] Fetch Countries Error',
   props<{error: any}>()
 );
 
@@ -71,4 +71,28 @@ export const fetchHistoricalSuccess = createAction(
 export const fetchHistoricalError = createAction(
   '[Core] Fetch Historical Error',
   props<{error: any}>()
+);
+
+export const fetchYesterdayCountries = createAction(
+  '[Core] Fetch Yesterday Countries'
+);
+
+export const fetchYesterdayCountriesSuccess = createAction(
+  '[Core] Fetch Yesterday Countries Success',
+  props<{yesterdayCountries: Country[]}>()
+);
+
+export const fetchYesterdayCountriesError = createAction(
+  '[Core] Fetch Yesterday Countries Success',
+  props<{error: any}>()
+);
+
+export const setWorld = createAction(
+  '[Core] Set World data',
+  props<{world: OverviewData}>()
+);
+
+export const setYesterdayWorld = createAction(
+  '[Core] Set Yesterday World data',
+  props<{yesterdayWorld: OverviewData}>()
 );

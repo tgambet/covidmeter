@@ -41,9 +41,8 @@ import {map, startWith} from 'rxjs/operators';
   styles: [`
     :host {
       display: block;
-      background-color: #424242;
-      border-radius: 4px;
     }
+
     .chart {
       width: 100%;
     }

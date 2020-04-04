@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {fetchCountries, fetchGeoJson, fetchHistorical} from './store/core.actions';
+import {fetchCountries, fetchGeoJson, fetchHistorical, fetchYesterdayCountries} from './store/core.actions';
 import {fromEvent, timer} from 'rxjs';
 import {concatMap, filter, repeatWhen, shareReplay, takeUntil, tap} from 'rxjs/operators';
 import {SwUpdate} from '@angular/service-worker';
@@ -96,8 +96,9 @@ export class AppComponent implements OnInit {
       filter(() => document.visibilityState === 'hidden')
     );
 
-    timer(0, 1000 * 60).pipe(
+    timer(0, 2 * 1000 * 60).pipe(
       tap(() => this.store.dispatch(fetchCountries())),
+      tap(() => this.store.dispatch(fetchYesterdayCountries())),
       tap(() => this.store.dispatch(fetchHistorical())),
       takeUntil(pageHidden$),
       repeatWhen(() => pageVisible$)

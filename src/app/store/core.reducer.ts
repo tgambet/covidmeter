@@ -2,19 +2,26 @@ import {ActionReducer, createReducer, on} from '@ngrx/store';
 import {CoreState, initialState} from './core.state';
 import {
   fetchCountriesSuccess,
-  fetchGeoJsonSuccess, fetchHistoricalSuccess,
+  fetchGeoJsonSuccess,
+  fetchHistoricalSuccess,
+  fetchYesterdayCountriesSuccess,
   setFilterFrom,
   setMapDataType,
   setMapScale,
   setMaxCases,
   setNormalize,
-  setSortBy
+  setSortBy,
+  setWorld,
+  setYesterdayWorld
 } from './core.actions';
 
 export const coreReducer: ActionReducer<CoreState> = createReducer(
   initialState,
   on(fetchCountriesSuccess, (state, {countries}) => (
     {...state, countries }
+  )),
+  on(fetchYesterdayCountriesSuccess, (state, {yesterdayCountries}) => (
+    {...state, yesterdayCountries }
   )),
   on(setNormalize, (state, {normalize}) => (
     {...state, normalize}
@@ -39,5 +46,11 @@ export const coreReducer: ActionReducer<CoreState> = createReducer(
   )),
   on(fetchHistoricalSuccess, (state, {historical}) => (
     {...state, historical}
+  )),
+  on(setWorld, (state, {world}) => (
+    {...state, world}
+  )),
+  on(setYesterdayWorld, (state, {yesterdayWorld}) => (
+    {...state, yesterdayWorld}
   ))
 );

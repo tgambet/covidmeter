@@ -43,3 +43,26 @@ export const reduceTimeline = array => array.reduce((result, r) => {
   deaths: {},
   recovered: {}
 });
+
+export const reduceToWorld = countries => countries.reduce((r, c) => ({
+    country: 'World',
+    cases: r.cases + c.cases,
+    todayCases: r.todayCases + c.todayCases,
+    deaths: r.deaths + c.deaths,
+    todayDeaths: r.todayDeaths + c.todayDeaths,
+    recovered: r.recovered + c.recovered,
+    active: r.active + c.active,
+    critical: r.critical + c.critical,
+    updated: c.updated,
+  }), {
+    country: 'World',
+    cases: 0,
+    todayCases: 0,
+    deaths: 0,
+    todayDeaths: 0,
+    recovered: 0,
+    active: 0,
+    critical: 0,
+    updated: 0,
+  }
+);

@@ -7,10 +7,20 @@ import {
   fetchCountriesSuccess,
   fetchGeoJson,
   fetchGeoJsonError,
-  fetchGeoJsonSuccess, fetchHistorical, fetchHistoricalError, fetchHistoricalSuccess
+  fetchGeoJsonSuccess,
+  fetchHistorical,
+  fetchHistoricalError,
+  fetchHistoricalSuccess,
+  fetchYesterdayCountries,
+  fetchYesterdayCountriesError,
+  fetchYesterdayCountriesSuccess,
+  setWorld,
+  setYesterdayWorld
 } from './core.actions';
 import {DataService} from '../data.service';
-import {map} from 'rxjs/operators';
+import {concatMap, map} from 'rxjs/operators';
+import {of} from 'rxjs';
+import {reduceToWorld} from '../utils';
 
 @Injectable()
 export class CoreEffects {
@@ -26,9 +36,25 @@ export class CoreEffects {
     ofType(fetchCountries),
     act({
       project: () => this.dataService.getCountries().pipe(
-        map(countries => fetchCountriesSuccess({countries}))
+        concatMap(countries => of(
+          setWorld({world: reduceToWorld(countries)}),
+          fetchCountriesSuccess({countries})
+        ))
       ),
       error: error => fetchCountriesError({error})
+    })
+  ));
+
+  fetchYesterdayCountries$ = createEffect(() => this.actions$.pipe(
+    ofType(fetchYesterdayCountries),
+    act({
+      project: () => this.dataService.getYesterdayCountries().pipe(
+        concatMap(yesterdayCountries => of(
+          setYesterdayWorld({yesterdayWorld: reduceToWorld(yesterdayCountries)}),
+          fetchYesterdayCountriesSuccess({yesterdayCountries})
+        ))
+      ),
+      error: error => fetchYesterdayCountriesError({error})
     })
   ));
 

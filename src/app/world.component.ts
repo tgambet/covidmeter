@@ -1,24 +1,24 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {select, Store} from '@ngrx/store';
-import {getCountries, getFilterFrom, getHistorical} from './store/core.selectors';
-import {filter, map} from 'rxjs/operators';
+import {getFilterFrom} from './store/core.selectors';
 import {Observable} from 'rxjs';
-import {OverviewData} from './overview.component';
 import {setFilterFrom} from './store/core.actions';
-import {reduceTimeline, timelineToData} from './utils';
 
 @Component({
   selector: 'app-world',
   template: `
-    <app-overview *ngIf="overview$ | async" [data]="overview$ | async" [chartData$]="chartData$">
+    <app-overview>
       <span>World overview</span>
       <mat-icon>language</mat-icon>
     </app-overview>
+    <app-timeline></app-timeline>
     <h1>Overview by country</h1>
     <app-countries></app-countries>
     <p>
       Show countries with more than
       <select [value]="filterFrom$ | async" (change)="setFilterFrom($event.target)">
+        <option>1000</option>
+        <option>500</option>
         <option>100</option>
         <option>50</option>
         <option>10</option>
@@ -37,6 +37,11 @@ import {reduceTimeline, timelineToData} from './utils';
 
     mat-icon {
       margin-left: auto;
+    }
+
+    app-overview {
+      display: block;
+      margin-bottom: 16px;
     }
 
     h1 {
@@ -61,8 +66,6 @@ import {reduceTimeline, timelineToData} from './utils';
 })
 export class WorldComponent implements OnInit {
 
-  overview$: Observable<OverviewData>;
-  chartData$: Observable<{ date: Date, values: number[] }[]>;
   filterFrom$: Observable<number>;
 
   constructor(
@@ -71,20 +74,8 @@ export class WorldComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.overview$ = this.store.pipe(
-      select(getCountries),
-      filter(countries => countries.length > 0),
-      map(countries => countries.find(c => c.country === 'World')),
-    );
-
     this.filterFrom$ = this.store.pipe(
       select(getFilterFrom)
-    );
-
-    this.chartData$ = this.store.pipe(
-      select(getHistorical),
-      map(reduceTimeline),
-      map(timelineToData)
     );
   }
 

@@ -48,14 +48,14 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
     </div>
     <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
       <ng-template #dialog>
-        <app-overview [data]="data.country" [chartData$]="data.chartData$">
+        <app-overview [countryName]="data.country.country">
           <button mat-icon-button (click)="closeDialog()">
             <mat-icon>close</mat-icon>
           </button>
           <span>{{data.country.country}}</span>
-          <!--<a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
-            (show details)
-          </a>-->
+          <a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
+            (details)
+          </a>
           <img [src]="data.country.countryInfo.flag" alt="flag"/>
         </app-overview>
       </ng-template>
@@ -226,7 +226,6 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
         map(([countries, normalize, max, sortBy, filterFrom]) =>
           countries
             .filter(country => country.cases > filterFrom)
-            .filter(country => country.country !== 'World')
             .slice()
             .sort((a, b) => {
               if (sortBy === 'mortality') {

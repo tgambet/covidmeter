@@ -1,17 +1,10 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {getDataSet} from './utils';
-import {Observable} from 'rxjs';
-
-export interface OverviewData {
-  cases: number;
-  todayCases: number;
-  deaths: number;
-  todayDeaths: number;
-  recovered: number;
-  active: number;
-  critical: number;
-  updated: number;
-}
+import {combineLatest, Observable} from 'rxjs';
+import {OverviewData} from './data.service';
+import {filter, map} from 'rxjs/operators';
+import {select, Store} from '@ngrx/store';
+import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld} from './store/core.selectors';
 
 @Component({
   selector: 'app-overview',
@@ -21,54 +14,48 @@ export interface OverviewData {
         <ng-content></ng-content>
       </h1>
       <mat-divider></mat-divider>
-      <ul class="overview">
-        <li>
-          <span class="label active">Mild cases</span>
-          <span class="value">{{data.cases - data.recovered - data.critical - data.deaths | number}}</span>
-          <span class="part">
-            ({{(data.cases - data.recovered - data.critical - data.deaths) / data.cases * 100 | number:'1.0-1'}}%)
-          </span>
-        </li>
-        <li>
-          <span class="label recovered">Recovered</span>
-          <span class="value">{{data.recovered | number}}</span>
-          <span class="part">({{data.recovered / data.cases * 100 | number:'1.0-1'}}%)</span>
-        </li>
-        <li>
-          <span class="label critical">Critical</span>
-          <span class="value">{{data.critical | number}}</span>
-          <span class="part">({{data.critical / data.cases * 100 | number:'1.0-1'}}%)</span>
-        </li>
-        <li>
-          <span class="label deaths">Deaths</span>
-          <span class="value">{{data.deaths | number}}</span>
-          <span class="part">({{data.deaths / data.cases * 100 | number:'1.0-1'}}%)</span>
-        </li>
-        <li class="total">
-          <span class="label">Total</span>
-          <span class="value">{{data.cases | number}}</span>
-        </li>
-      </ul>
-      <app-bar [dataSet]="getData(data)"></app-bar>
-      <p class="source meta">Source: Worldometer</p>
-      <p class="updated meta">Last updated: {{data.updated | date:'short'}}</p>
-      <h2>Timeline</h2>
-      <app-chart [data$]="chartData$" [colors]="['black', '#4caf50', '#9e9e9e']"></app-chart>
-      <p class="source meta">Source: Johns Hopkins University</p>
-
-      <!--      <p class="today">Today:</p>
-            <ul class="today">
-              <li>
-                <span class="label">Cases</span>
-                <span class="value">{{data.todayCases | number}}</span>
-                <span class="part">(+{{data.todayCases / (data.cases - data.todayCases) * 100 | number:'1.0-1'}}%)</span>
-              </li>
-              <li>
-                <span class="label">Deaths</span>
-                <span class="value">{{data.todayDeaths | number}}</span>
-                <span class="part">(+{{data.todayDeaths / (data.deaths - data.todayDeaths) * 100 | number:'1.0-1'}}%)</span>
-              </li>
-            </ul>-->
+      <ng-container *ngIf="data$ | async; let d">
+          <ul class="overview">
+            <li>
+              <span class="label deaths">Deaths</span>
+              <span class="value">{{d.today.deaths | number}}</span>
+              <ng-container *ngIf="d.today.deaths - d.yesterday.deaths; let diff;">
+                <span class="part">+{{diff | number:'1.0-1'}}</span>
+              </ng-container>
+            </li>
+            <li>
+              <span class="label critical">Critical</span>
+              <span class="value">{{d.today.critical | number}}</span>
+              <ng-container *ngIf="d.today.critical - d.yesterday.critical; let diff;">
+                <span class="part">{{diff > 0 ? '+' : ''}}{{diff | number:'1.0-1'}}</span>
+              </ng-container>
+            </li>
+            <li>
+              <span class="label recovered">Recovered</span>
+              <span class="value">{{d.today.recovered | number}}</span>
+              <ng-container *ngIf="d.today.recovered - d.yesterday.recovered; let diff;">
+                <span class="part">+{{diff | number:'1.0-1'}}</span>
+              </ng-container>
+            </li>
+            <li>
+              <span class="label active">Other cases</span>
+              <span class="value">{{d.today.active - d.today.critical | number}}</span>
+              <ng-container *ngIf="(d.today.active - d.today.critical) - (d.yesterday.active - d.yesterday.critical); let diff;">
+                <span class="part">{{diff > 0 ? '+' : ''}}{{diff | number:'1.0-1'}}</span>
+              </ng-container>
+            </li>
+            <li class="total">
+              <span class="label">Total</span>
+              <span class="value">{{d.today.cases | number}}</span>
+              <ng-container *ngIf="d.today.cases - d.yesterday.cases; let diff;">
+                <span class="part">+{{diff | number:'1.0-1'}}</span>
+              </ng-container>
+            </li>
+          </ul>
+          <app-bar [dataSet]="getData(d.today.cases, d.today.deaths, d.today.critical, d.today.recovered)"></app-bar>
+          <p class="source meta">Source: Worldometer</p>
+          <p class="updated meta">Last updated: {{d.today.updated | date:'short'}}</p>
+      </ng-container>
     </mat-card>
   `,
   styles: [`
@@ -90,7 +77,7 @@ export interface OverviewData {
     h2 {
       font-size: 14px;
       font-weight: 400;
-      margin: 12px 0 12px 0;
+      margin: 24px 0 12px 0;
     }
 
     app-bar {
@@ -112,7 +99,7 @@ export interface OverviewData {
     }
 
     .label {
-      flex: 0 0 45%;
+      flex: 0 0 40%;
       text-align: right;
       padding-right: 8px;
       box-sizing: border-box;
@@ -145,6 +132,8 @@ export interface OverviewData {
     }
 
     .part {
+      flex: 0 1 60px;
+      text-align: right;
       font-size: 12px;
       opacity: 0.75;
       font-weight: 300;
@@ -159,8 +148,13 @@ export interface OverviewData {
     .meta {
       margin: 0;
       font-size: 12px;
+      font-weight: 300;
       color: #aaa;
       text-align: right;
+    }
+
+    .updated {
+      margin-bottom: 12px;
     }
 
     app-chart {
@@ -172,15 +166,31 @@ export interface OverviewData {
 export class OverviewComponent implements OnInit {
 
   @Input()
-  data: OverviewData;
+  countryName?: string;
 
-  @Input()
-  chartData$: Observable<{ date: Date, values: number[] }[]>;
+  data$: Observable<{ today: OverviewData, yesterday: OverviewData }>;
 
-  ngOnInit(): void {
+  constructor(
+    private store: Store
+  ) {
   }
 
-  getData(data: OverviewData) {
-    return getDataSet(data.cases, data.deaths, data.critical, data.recovered);
+  ngOnInit(): void {
+    const country$ = this.countryName ? this.store.pipe(
+      select(getCountryByName, this.countryName),
+      filter(c => !!c)
+    ) : this.store.pipe(select(getWorld));
+
+    const yesterday$ = this.countryName ?  this.store.pipe(
+      select(getYesterdayCountryByName, this.countryName)
+    ) : this.store.pipe(select(getYesterdayWorld));
+
+    this.data$ = combineLatest([country$, yesterday$]).pipe(
+      map(([today, yesterday]) => ({today, yesterday: yesterday ? yesterday : today}))
+    );
+  }
+
+  getData(cases, deaths, critical, recovered) {
+    return getDataSet(cases, deaths, critical, recovered);
   }
 }

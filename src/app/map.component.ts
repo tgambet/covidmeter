@@ -6,7 +6,6 @@ import {filter, map, tap} from 'rxjs/operators';
 import * as d3 from 'd3';
 import {combineLatest, Observable, Subscription} from 'rxjs';
 import {setMapDataType, setMapScale} from './store/core.actions';
-import {formatNumber} from '@angular/common';
 
 @Component({
   selector: 'app-map',
@@ -191,7 +190,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     const mainCountries$ = this.store.pipe(
       select(getCountries),
-      map(countries => countries.filter(c => c.country !== 'World')),
       map(countries => countries.filter(
         c => c.cases * 1000000 / c.casesPerOneMillion > 100000
       ))
