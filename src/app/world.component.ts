@@ -74,15 +74,7 @@ export class WorldComponent implements OnInit {
     this.overview$ = this.store.pipe(
       select(getCountries),
       filter(countries => countries.length > 0),
-      map(countries => countries.reduce((result, country) => ({
-        cases: result.cases + country.cases,
-        todayCases: result.todayCases + country.todayCases,
-        deaths: result.deaths + country.deaths,
-        todayDeaths: result.todayDeaths + country.todayDeaths,
-        recovered: result.recovered + country.recovered,
-        active: result.active + country.active,
-        critical: result.critical + country.critical
-      }), {cases: 0, todayCases: 0, deaths: 0, todayDeaths: 0, recovered: 0, active: 0, critical: 0}))
+      map(countries => countries.find(c => c.country === 'World')),
     );
 
     this.filterFrom$ = this.store.pipe(

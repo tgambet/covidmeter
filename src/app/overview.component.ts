@@ -10,6 +10,7 @@ export interface OverviewData {
   recovered: number;
   active: number;
   critical: number;
+  updated: number;
 }
 
 @Component({
@@ -48,10 +49,12 @@ export interface OverviewData {
           <span class="value">{{data.cases | number}}</span>
         </li>
       </ul>
-      <h2>Overall progression</h2>
       <app-bar [dataSet]="getData(data)"></app-bar>
+      <p class="source meta">Source: Worldometer</p>
+      <p class="updated meta">Last updated: {{data.updated | date:'short'}}</p>
       <h2>Timeline</h2>
       <app-chart [data$]="chartData$" [colors]="['black', '#4caf50', '#9e9e9e']"></app-chart>
+      <p class="source meta">Source: Johns Hopkins University</p>
 
       <!--      <p class="today">Today:</p>
             <ul class="today">
@@ -87,18 +90,18 @@ export interface OverviewData {
     h2 {
       font-size: 14px;
       font-weight: 400;
-      margin: 0 0 12px 0;
+      margin: 12px 0 12px 0;
     }
 
     app-bar {
       display: block;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .overview {
       list-style: none;
-      margin: 0;
-      padding: 16px 0;
+      margin: 16px 0 12px;
+      padding: 0;
     }
 
     .overview li {
@@ -151,6 +154,17 @@ export interface OverviewData {
       margin-top: 8px;
       margin-bottom: 0;
       font-weight: 700;
+    }
+
+    .meta {
+      margin: 0;
+      font-size: 12px;
+      color: #aaa;
+      text-align: right;
+    }
+
+    app-chart {
+      margin-bottom: 12px;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush

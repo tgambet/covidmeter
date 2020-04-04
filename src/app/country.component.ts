@@ -69,17 +69,7 @@ export class CountryComponent implements OnInit {
       filter(country => !!country),
     );
 
-    this.overview$ = this.country$.pipe(
-      map((country: Country) => ({
-        cases: country.cases,
-        todayCases: country.todayCases,
-        deaths: country.deaths,
-        todayDeaths: country.todayDeaths,
-        recovered: country.recovered,
-        active: country.active,
-        critical: country.critical,
-      }))
-    );
+    this.overview$ = this.country$;
 
     this.data$ = combineLatest([
       this.country$,

@@ -20,6 +20,7 @@ export interface Country {
   critical: number;
   casesPerOneMillion: number;
   deathsPerOneMillion: number;
+  updated: number;
 }
 
 @Injectable({

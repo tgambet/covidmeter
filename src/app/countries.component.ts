@@ -226,6 +226,7 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
         map(([countries, normalize, max, sortBy, filterFrom]) =>
           countries
             .filter(country => country.cases > filterFrom)
+            .filter(country => country.country !== 'World')
             .slice()
             .sort((a, b) => {
               if (sortBy === 'mortality') {
