@@ -191,6 +191,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     const mainCountries$ = this.store.pipe(
       select(getCountries),
+      map(countries => countries.filter(c => c.country !== 'World')),
       map(countries => countries.filter(
         c => c.cases * 1000000 / c.casesPerOneMillion > 100000
       ))
