@@ -13,10 +13,10 @@ import {
 import {combineLatest, Observable, Subscription} from 'rxjs';
 import {Country} from './data.service';
 import {select, Store} from '@ngrx/store';
-import {getCountries, getFilterFrom, getHistorical, getMaxCases, getNormalize, getSortBy} from './store/core.selectors';
+import {getCountries, getFilterFrom, getMaxCases, getNormalize, getSortBy} from './store/core.selectors';
 import {setMaxCases, setNormalize, setSortBy} from './store/core.actions';
 import {map} from 'rxjs/operators';
-import {getDataSet, reduceTimeline, timelineToData} from './utils';
+import {getDataSet} from './utils';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
@@ -169,8 +169,7 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSets$: Observable<{
     country: Country;
     dataSet: { value: number; color: string }[],
-    offsetRight: number,
-    chartData$: Observable<{ date: Date, values: number[] }[]>
+    offsetRight: number
   }[]>;
 
   sortBys = [
@@ -237,12 +236,7 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
             .map(country => ({
               country,
               dataSet: getDataSet(country.cases, country.deaths, country.critical, country.recovered),
-              offsetRight: normalize ? 0 : Math.max(0, max - country.cases),
-              chartData$: this.store.pipe(
-                select(getHistorical),
-                map(array => reduceTimeline(array.filter(a => a.country === country.country))),
-                map(timelineToData)
-              )
+              offsetRight: normalize ? 0 : Math.max(0, max - country.cases)
             }))
         )
       );

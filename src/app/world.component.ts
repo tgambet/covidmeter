@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {Store} from '@ngrx/store';
 
 @Component({
   selector: 'app-world',
@@ -12,11 +11,12 @@ import {Store} from '@ngrx/store';
       <mat-icon>language</mat-icon>
     </app-overview>
     <app-timeline></app-timeline>
+    <app-growth></app-growth>
   `,
   styles: [`
     :host {
       display: block;
-      padding: 16px 16px 100px 16px;
+      padding: 16px;
       width: 100%;
       box-sizing: border-box;
       max-width: 600px;
@@ -32,7 +32,7 @@ import {Store} from '@ngrx/store';
       margin-left: auto;
     }
 
-    app-overview {
+    app-overview, app-timeline, app-growth {
       margin-bottom: 16px;
     }
   `],

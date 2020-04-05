@@ -157,8 +157,8 @@ import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld
       text-align: right;
     }
 
-    .updated {
-      margin-bottom: 12px;
+    .source {
+      margin-bottom: 4px;
     }
 
     app-chart {

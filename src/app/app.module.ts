@@ -32,7 +32,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {ChartComponent} from './chart.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {TimelineComponent} from './timeline.component';
-import { HomeComponent } from './home.component';
+import {HomeComponent} from './home.component';
+import {GrowthComponent} from './growth.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -75,7 +76,8 @@ const routes: Routes = [
     AboutComponent,
     ChartComponent,
     TimelineComponent,
-    HomeComponent
+    HomeComponent,
+    GrowthComponent
   ],
   imports: [
     BrowserModule,

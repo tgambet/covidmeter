@@ -73,6 +73,7 @@ export class ChartComponent implements OnInit {
 
   @Input() data$: Observable<{ date: Date, values: number[] }[]>;
   @Input() colors: string[];
+  @Input() unit: string;
 
   widthEmitter: EventEmitter<number> = new EventEmitter<number>();
   width$: Observable<number> = this.widthEmitter.pipe(startWith(313));
@@ -133,7 +134,7 @@ export class ChartComponent implements OnInit {
     this.yTicks$ = this.yScale$.pipe(
       map(scale => scale.ticks()
         .map(value => ({
-          label: d3.format('.2s')(value),
+          label: d3.format('.2s')(value) + (this.unit ? this.unit : ''),
           y: this.graphHeight - scale(value)
         }))
       ),

@@ -42,13 +42,13 @@ import {Observable} from 'rxjs';
       margin-top: 12px;
     }
 
-     .meta {
-       margin: 12px 0 0;
-       font-size: 12px;
-       font-weight: 300;
-       color: #aaa;
-       text-align: right;
-     }
+    .meta {
+      margin: 12px 0 0;
+      font-size: 12px;
+      font-weight: 300;
+      color: #aaa;
+      text-align: right;
+    }
   `]
 })
 export class TimelineComponent implements OnInit {

@@ -18,6 +18,7 @@ import {Country} from './data.service';
         <img [src]="country.countryInfo.flag" alt="flag"/>
       </app-overview>
       <app-timeline [countryName]="country.country"></app-timeline>
+      <app-growth [countryName]="country.country"></app-growth>
     </ng-container>
   `,
   styles: [`
@@ -42,9 +43,8 @@ import {Country} from './data.service';
       overflow: hidden;
     }
 
-    app-timeline {
-      display: block;
-      margin-top: 16px;
+    app-timeline, app-growth {
+      margin: 16px 0;
     }
   `]
 })
