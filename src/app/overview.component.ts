@@ -59,6 +59,10 @@ import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld
     </mat-card>
   `,
   styles: [`
+    :host {
+      display: block;
+    }
+
     mat-card {
       font-size: 14px;
     }
@@ -87,7 +91,7 @@ import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld
 
     .overview {
       list-style: none;
-      margin: 16px 0 12px;
+      margin: 16px 0;
       padding: 0;
     }
 
@@ -140,7 +144,7 @@ import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld
     }
 
     .overview .total {
-      margin-top: 8px;
+      margin-top: 16px;
       margin-bottom: 0;
       font-weight: 700;
     }

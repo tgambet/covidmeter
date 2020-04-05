@@ -10,7 +10,8 @@ import {Observable} from 'rxjs';
   template: `
     <mat-card>
       <h1>
-        Timeline
+        {{countryName || 'World'}} timeline
+        <mat-icon>timeline</mat-icon>
       </h1>
       <mat-divider></mat-divider>
       <app-chart [data$]="chartData$" [colors]="['black', '#4caf50', '#9e9e9e']"></app-chart>
@@ -18,13 +19,27 @@ import {Observable} from 'rxjs';
     </mat-card>
   `,
   styles: [`
+    :host {
+      display: block;
+    }
+
     h1 {
       font-size: 16px;
       font-weight: 500;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: -16px -16px 0 -16px !important;
+      padding: 8px 16px 8px 16px;
+      min-height: 40px;
+    }
+
+    mat-icon {
+      margin-left: auto;
     }
 
     app-chart {
-      margin-top: 24px;
+      margin-top: 12px;
     }
 
      .meta {

@@ -48,7 +48,7 @@ export class DataService {
   }
 
   getHistorical(): Observable<any> {
-    return this.httpClient.get('https://corona.lmao.ninja/v2/historical').pipe(
+    return this.httpClient.get('https://corona.lmao.ninja/v2/historical?lastdays=60').pipe(
       map((countries: Country[]) => countries.filter(c => c.country !== 'World'))
     );
   }

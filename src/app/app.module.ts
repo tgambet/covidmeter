@@ -32,6 +32,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {ChartComponent} from './chart.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {TimelineComponent} from './timeline.component';
+import { HomeComponent } from './home.component';
 
 const MATERIAL_MODULES = [
   // DragDropModule,
@@ -55,7 +56,8 @@ const MATERIAL_MODULES = [
 ];
 
 const routes: Routes = [
-  {path: '', component: WorldComponent},
+  {path: '', component: HomeComponent},
+  {path: 'world', component: WorldComponent},
   {path: 'country/:name', component: CountryComponent},
   {path: 'map', component: MapComponent},
   {path: 'about', component: AboutComponent},
@@ -72,12 +74,13 @@ const routes: Routes = [
     MapComponent,
     AboutComponent,
     ChartComponent,
-    TimelineComponent
+    TimelineComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(routes, {}),
+    RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     StoreModule.forRoot(reducers, {}),
     StoreDevtoolsModule.instrument({maxAge: 100, logOnly: environment.production}),

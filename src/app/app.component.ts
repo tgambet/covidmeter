@@ -15,6 +15,9 @@ import {NavigationEnd, Router} from '@angular/router';
       <a mat-icon-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>sort</mat-icon>
       </a>
+      <a mat-icon-button routerLink="world" routerLinkActive="active">
+        <mat-icon>timeline</mat-icon>
+      </a>
       <a mat-icon-button routerLink="map" routerLinkActive="active">
         <mat-icon>map</mat-icon>
       </a>
@@ -73,9 +76,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.router.events.subscribe((evt) => {
+    this.router.events.subscribe(evt => {
       if (evt instanceof NavigationEnd) {
-        window.scrollTo(0, 0);
+        window.scrollTo({top: 0});
       }
     });
 
