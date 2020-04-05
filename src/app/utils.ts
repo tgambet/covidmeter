@@ -29,6 +29,42 @@ export const timelineToData = t => {
   return datas.filter(data => data.values.reduce((total, d) => total + d, 0) > 0);
 };
 
+export const timelineToGrowthData = (t, key) => {
+  const datas = [];
+  const cases = Object.keys(t[key]).map((date, i) => ({
+    i,
+    date,
+    value: t[key][date]
+  }));
+  for (const c of cases) {
+    if (c.i > 0) {
+      datas.push({
+        date: new Date(c.date),
+        values: [(cases[c.i].value - cases[c.i - 1].value)]
+      });
+    }
+  }
+  return datas;
+};
+
+export const timelineToGrowthRateData = (t, key) => {
+  const datas = [];
+  const cases = Object.keys(t[key]).map((date, i) => ({
+    i,
+    date,
+    value: t[key][date]
+  }));
+  for (const c of cases) {
+    if (c.i > 0) {
+      datas.push({
+        date: new Date(c.date),
+        values: [cases[c.i - 1].value <= 0 ? 0 : ((cases[c.i].value - cases[c.i - 1].value) / cases[c.i - 1].value * 100)]
+      });
+    }
+  }
+  return datas;
+};
+
 export const reduceTimeline = array => array.reduce((result, r) => {
   for (const date in r.timeline.cases) {
     if (r.timeline.cases.hasOwnProperty(date)) {

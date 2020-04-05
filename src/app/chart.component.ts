@@ -86,7 +86,7 @@ export class ChartComponent implements OnInit {
 
   rects$: Observable<{ x: number, y: number, width: number, height: number, color: string }[]>;
 
-  margin = {top: 10, right: 25, bottom: 35, left: 10};
+  margin = {top: 10, right: 30, bottom: 35, left: 10};
   graphHeight = 140;
 
   @ViewChild('svg', {static: true})

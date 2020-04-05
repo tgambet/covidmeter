@@ -3,27 +3,47 @@ import {Observable} from 'rxjs';
 import {select, Store} from '@ngrx/store';
 import {getHistorical} from './store/core.selectors';
 import {map} from 'rxjs/operators';
-import {reduceTimeline} from './utils';
+import {reduceTimeline, timelineToGrowthData, timelineToGrowthRateData} from './utils';
 
 @Component({
   selector: 'app-growth',
   template: `
     <mat-card>
       <h1>
-        {{countryName || 'World'}} growth rate
+        {{countryName || 'World'}} epidemic progression
         <mat-icon>trending_up</mat-icon>
       </h1>
       <mat-divider></mat-divider>
+      <h2 class="first">
+        Cases growth per day
+      </h2>
       <app-chart [data$]="chartData$" [colors]="['#9e9e9e']"></app-chart>
-      <p class="source meta">Source: Johns Hopkins University</p>
-    </mat-card>
-    <mat-card>
-      <h1>
-        {{countryName || 'World'}} growth rate (relative)
-        <mat-icon>trending_up</mat-icon>
-      </h1>
       <mat-divider></mat-divider>
+      <h2>
+        Deaths growth per day
+      </h2>
+      <app-chart [data$]="chartData3$" [colors]="['rgba(0,0,0,0.75)']"></app-chart>
+      <mat-divider></mat-divider>
+      <h2>
+        Recovered growth per day
+      </h2>
+      <app-chart [data$]="chartData5$" [colors]="['#4caf50']"></app-chart>
+      <mat-divider></mat-divider>
+
+      <h2>
+        Cases growth rate per day
+      </h2>
       <app-chart [data$]="chartData2$" [colors]="['#9e9e9e']" unit="%"></app-chart>
+      <mat-divider></mat-divider>
+      <h2>
+        Deaths growth rate per day
+      </h2>
+      <app-chart [data$]="chartData4$" [colors]="['rgba(0,0,0,0.75)']" unit="%"></app-chart>
+      <mat-divider></mat-divider>
+      <h2>
+        Recovered growth rate per day
+      </h2>
+      <app-chart [data$]="chartData6$" [colors]="['#4caf50']" unit="%"></app-chart>
       <p class="source meta">Source: Johns Hopkins University</p>
     </mat-card>
   `,
@@ -46,6 +66,16 @@ import {reduceTimeline} from './utils';
       margin: -16px -16px 0 -16px !important;
       padding: 8px 16px 8px 16px;
       min-height: 40px;
+    }
+
+    h2 {
+      font-size: 14px;
+      font-weight: 400;
+      margin-top: 32px;
+    }
+
+    h2.first {
+      margin-top: 16px;
     }
 
     mat-icon {
@@ -72,6 +102,10 @@ export class GrowthComponent implements OnInit {
 
   chartData$: Observable<{ date: Date, values: number[] }[]>;
   chartData2$: Observable<{ date: Date, values: number[] }[]>;
+  chartData3$: Observable<{ date: Date, values: number[] }[]>;
+  chartData4$: Observable<{ date: Date, values: number[] }[]>;
+  chartData5$: Observable<{ date: Date, values: number[] }[]>;
+  chartData6$: Observable<{ date: Date, values: number[] }[]>;
 
   constructor(
     private store: Store
@@ -86,43 +120,27 @@ export class GrowthComponent implements OnInit {
     );
 
     this.chartData$ = data$.pipe(
-      map(t => {
-        const datas = [];
-        const cases = Object.keys(t.cases).map((date, i) => ({
-          i,
-          date,
-          value: t.cases[date]
-        }));
-        for (const c of cases) {
-          if (c.i > 0) {
-            datas.push({
-              date: new Date(c.date),
-              values: [(cases[c.i].value - cases[c.i - 1].value)]
-            });
-          }
-        }
-        return datas;
-      })
+      map(t => timelineToGrowthData(t, 'cases'))
     );
 
     this.chartData2$ = data$.pipe(
-      map(t => {
-        const datas = [];
-        const cases = Object.keys(t.cases).map((date, i) => ({
-          i,
-          date,
-          value: t.cases[date]
-        }));
-        for (const c of cases) {
-          if (c.i > 0) {
-            datas.push({
-              date: new Date(c.date),
-              values: [(cases[c.i].value - cases[c.i - 1].value) / cases[c.i - 1].value * 100]
-            });
-          }
-        }
-        return datas;
-      })
+      map(t => timelineToGrowthRateData(t, 'cases'))
+    );
+
+    this.chartData3$ = data$.pipe(
+      map(t => timelineToGrowthData(t, 'deaths'))
+    );
+
+    this.chartData4$ = data$.pipe(
+      map(t => timelineToGrowthRateData(t, 'deaths'))
+    );
+
+    this.chartData5$ = data$.pipe(
+      map(t => timelineToGrowthData(t, 'recovered'))
+    );
+
+    this.chartData6$ = data$.pipe(
+      map(t => timelineToGrowthRateData(t, 'recovered'))
     );
   }
 
