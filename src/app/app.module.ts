@@ -82,8 +82,11 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     HttpClientModule,
+    ServiceWorkerModule.register(
+      'ngsw-worker.js',
+      { enabled: environment.production, registrationStrategy: 'registerImmediately' }
+    ),
     RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'}),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     StoreModule.forRoot(reducers, {}),
     StoreDevtoolsModule.instrument({maxAge: 100, logOnly: environment.production}),
     EffectsModule.forRoot([CoreEffects]),
