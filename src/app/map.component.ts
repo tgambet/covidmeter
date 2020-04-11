@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {select, Store} from '@ngrx/store';
 import {getCountries, getGeoJson, getMapDataType, getMapScale} from './store/core.selectors';
@@ -15,12 +15,43 @@ import {setMapDataType, setMapScale} from './store/core.actions';
       <ng-container *ngIf="legend$ | async; let legend">
         <h2>{{legend.title}}</h2>
         <div class="colors"></div>
-        <div class="labels">
-            <span class="label" *ngFor="let label of legend.labels" [style.bottom]="label.bottom - 5 + 'px'">
+        <div class="legend-labels">
+            <span class="legend-label" *ngFor="let label of legend.labels" [style.bottom]="label.bottom - 5 + 'px'">
               -&nbsp;&nbsp;{{label.label}}
             </span>
         </div>
       </ng-container>
+    </div>
+    <div class="details mat-elevation-z6" *ngIf="details$ | async; let d">
+      <h3>{{d.name}}</h3>
+      <ul class="overview">
+        <li>
+          <span class="label deaths">Deaths</span>
+          <span class="value">{{d.country.deaths | number}}</span>
+        </li>
+        <li>
+          <span class="label critical">Critical</span>
+          <span class="value">{{d.country.critical | number}}</span>
+        </li>
+        <li>
+          <span class="label recovered">Recovered</span>
+          <span class="value">{{d.country.recovered | number}}</span>
+        </li>
+        <li>
+          <span class="label active">Others</span>
+          <span class="value">{{d.country.cases - d.country.deaths - d.country.critical - d.country.recovered | number}}</span>
+        </li>
+        <li class="total">
+          <span class="label">Total</span>
+          <span class="value">{{d.country.cases | number}}</span>
+        </li>
+      </ul>
+      <app-bar [dataSet]="[
+        {value: d.country.deaths, color: 'black'},
+        {value: d.country.critical, color: '#ff5722'},
+        {value: d.country.recovered, color: '#4caf50'},
+        {value: d.country.cases - d.country.deaths - d.country.critical - d.country.recovered, color: '#9E9E9E'}
+      ]"></app-bar>
     </div>
     <div class="zoom mat-elevation-z6">
       <button mat-icon-button (click)="toggleFullScreen()">
@@ -117,14 +148,14 @@ import {setMapDataType, setMapScale} from './store/core.actions';
       background: linear-gradient(to top, #0ff, #0ff 5px, #0091ea 5px, #d50000);
     }
 
-    .labels {
+    .legend-labels {
       height: 150px;
       display: flex;
       flex-direction: column;
       position: relative;
     }
 
-    .label {
+    .legend-label {
       font-size: 10px;
       line-height: 12px;
       position: absolute;
@@ -148,6 +179,71 @@ import {setMapDataType, setMapScale} from './store/core.actions';
 
     mat-form-field {
       width: 100%;
+    }
+
+    .details {
+      width: 150px;
+      position: absolute;
+      bottom: 8px;
+      left: 92px;
+      background-color: #303030;
+      padding: 8px;
+      border-radius: 4px;
+      z-index: 400;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .details h3 {
+      font-size: 14px;
+      margin: 0 0 8px 0;
+      text-align: center;
+    }
+
+    .overview {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 8px 0;
+      font-size: 12px;
+    }
+
+    .overview li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      font-weight: 300;
+    }
+
+    .label {
+      flex: 0 0 55%;
+      text-align: right;
+      padding-right: 8px;
+      box-sizing: border-box;
+    }
+
+    .label {
+      border-right: 8px solid transparent;
+    }
+
+    .label.active {
+      border-right: 8px solid #9E9E9E;
+    }
+
+    .label.recovered {
+      border-right: 8px solid #4caf50;
+    }
+
+    .label.critical {
+      border-right: 8px solid #ff5722;
+    }
+
+    .label.deaths {
+      border-right: 8px solid black;
+    }
+
+    .value {
+      flex: 0 0 50px;
+      text-align: right;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -176,6 +272,9 @@ export class MapComponent implements OnInit, OnDestroy {
   dataType$: Observable<string>;
   scale$: Observable<'linear' | 'log'>;
 
+  detailsEE: EventEmitter<any> = new EventEmitter<any>();
+  details$: Observable<any>;
+
   map: L.Map;
   geoJson: L.GeoJSON;
 
@@ -187,6 +286,8 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.details$ = this.detailsEE.asObservable();
 
     const mainCountries$ = this.store.pipe(
       select(getCountries),
@@ -316,7 +417,7 @@ export class MapComponent implements OnInit, OnDestroy {
             fillColor = c => c && c.cases > 0 ? this.getColor(c.deaths / c.cases * 100, max.mortality, scale) : 'grey';
         }
 
-        this.updateMap(L.geoJSON(
+        const geoJson = L.geoJSON(
           json as any,
           {
             style: d => ({
@@ -325,9 +426,28 @@ export class MapComponent implements OnInit, OnDestroy {
               weight: 1,
               opacity: 1,
               color: '#333',
-            })
+            }),
+            onEachFeature: (feature, layer) => {
+              layer.on({
+                mouseover: e => {
+                  const l = e.target;
+                  l.setStyle({
+                    weight: 3,
+                    color: '#000'
+                  });
+                  l.bringToFront();
+                  this.detailsEE.emit(e.target.feature.properties);
+                },
+                mouseout: e => geoJson.resetStyle(e.target),
+                click: e => {
+                  this.map.panTo(e.target.getBounds().getCenter());
+                  this.detailsEE.emit(e.target.feature.properties);
+                }
+              });
+            }
           }
-        ));
+        );
+        this.updateMap(geoJson);
       })
     ).subscribe();
 
