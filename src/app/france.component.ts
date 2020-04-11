@@ -452,7 +452,7 @@ export class FranceComponent implements OnInit, OnDestroy {
                 },
                 mouseout: e => geoJson.resetStyle(e.target),
                 click: e => {
-                  this.map.fitBounds(e.target.getBounds());
+                  this.map.panTo(e.target.getBounds().getCenter());
                   this.detailsEE.emit(e.target.feature.properties);
                 }
               });

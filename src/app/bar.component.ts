@@ -58,12 +58,13 @@ export class BarComponent implements OnInit, OnChanges {
   @Input()
   showTotal = false;
 
+  @Input()
+  label;
+
   displaySet: { length: number; offset: number; color: string }[] = [];
 
   total = 0;
   length = 0;
-
-  label: string;
 
   constructor(
     private cdr: ChangeDetectorRef
@@ -100,7 +101,7 @@ export class BarComponent implements OnInit, OnChanges {
       offset += result.length;
       return result;
     });
-    this.label = d3.format('.3s')(this.total);
+    this.label = this.label ? this.label : d3.format('.3s')(this.total);
   }
 
   trackByFn(index, item) {

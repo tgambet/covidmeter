@@ -18,6 +18,7 @@ import {setMaxCases, setNormalize, setSortBy} from './store/core.actions';
 import {map} from 'rxjs/operators';
 import {getDataSet} from './utils';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-countries',
@@ -63,7 +64,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
            [attr.data-max]="data.country.cases" [attr.data-name]="data.country.country"
            (click)="openDialog(dialog)">
         <h1>{{data.country.country}}</h1>
-        <app-bar [dataSet]="data.dataSet" [offsetRight]="data.offsetRight" [showTotal]="true"></app-bar>
+        <app-bar [dataSet]="data.dataSet" [offsetRight]="data.offsetRight" [showTotal]="true" [label]="data.label"></app-bar>
       </div>
     </ng-container>
 
@@ -169,7 +170,8 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSets$: Observable<{
     country: Country;
     dataSet: { value: number; color: string }[],
-    offsetRight: number
+    offsetRight: number,
+    label?: string
   }[]>;
 
   sortBys = [
@@ -222,8 +224,14 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataSets$ =
       combineLatest([this.countries$, this.normalize$, this.maxCases$, this.sortBy$, filterFrom$]).pipe(
-        map(([countries, normalize, max, sortBy, filterFrom]) =>
-          countries
+        map(([countries, normalize, max, sortBy, filterFrom]) => {
+          let label;
+          if (sortBy === 'mortality') {
+            label = (c: Country) => d3.format('.2s')(c.cases === 0 ? 0 : c.deaths / c.cases * 100) + '%';
+          } else {
+            label = (c: Country) => d3.format('.3s')(c[sortBy]);
+          }
+          return countries
             .filter(country => country.cases > filterFrom)
             .slice()
             .sort((a, b) => {
@@ -236,9 +244,10 @@ export class CountriesComponent implements OnInit, AfterViewInit, OnDestroy {
             .map(country => ({
               country,
               dataSet: getDataSet(country.cases, country.deaths, country.critical, country.recovered),
-              offsetRight: normalize ? 0 : Math.max(0, max - country.cases)
-            }))
-        )
+              offsetRight: normalize ? 0 : Math.max(0, max - country.cases),
+              label: label(country)
+            }));
+        })
       );
 
     const options = {
