@@ -56,4 +56,12 @@ export class DataService {
   getGeoJson(): Observable<any> {
     return this.httpClient.get('/assets/countries.geo.json');
   }
+
+  getFranceGeoJson(): Observable<any> {
+    return this.httpClient.get('/assets/france.geo.json');
+  }
+
+  getFranceData(): Observable<string> {
+    return this.httpClient.get('https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7', {responseType: 'text'});
+  }
 }
