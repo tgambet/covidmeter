@@ -24,34 +24,36 @@ import {setMapDataType, setMapScale} from './store/core.actions';
     </div>
     <div class="details mat-elevation-z6" *ngIf="details$ | async; let d">
       <h3>{{d.name}}</h3>
-      <ul class="overview">
-        <li>
-          <span class="label deaths">Deaths</span>
-          <span class="value">{{d.country.deaths | number}}</span>
-        </li>
-        <li>
-          <span class="label critical">Critical</span>
-          <span class="value">{{d.country.critical | number}}</span>
-        </li>
-        <li>
-          <span class="label recovered">Recovered</span>
-          <span class="value">{{d.country.recovered | number}}</span>
-        </li>
-        <li>
-          <span class="label active">Others</span>
-          <span class="value">{{d.country.cases - d.country.deaths - d.country.critical - d.country.recovered | number}}</span>
-        </li>
-        <li class="total">
-          <span class="label">Total</span>
-          <span class="value">{{d.country.cases | number}}</span>
-        </li>
-      </ul>
-      <app-bar [dataSet]="[
-        {value: d.country.deaths, color: 'black'},
-        {value: d.country.critical, color: '#ff5722'},
-        {value: d.country.recovered, color: '#4caf50'},
-        {value: d.country.cases - d.country.deaths - d.country.critical - d.country.recovered, color: '#9E9E9E'}
-      ]"></app-bar>
+      <ng-container *ngIf="d.country">
+        <ul class="overview">
+          <li>
+            <span class="label deaths">Deaths</span>
+            <span class="value">{{d.country.deaths | number}}</span>
+          </li>
+          <li>
+            <span class="label critical">Critical</span>
+            <span class="value">{{d.country.critical | number}}</span>
+          </li>
+          <li>
+            <span class="label recovered">Recovered</span>
+            <span class="value">{{d.country.recovered | number}}</span>
+          </li>
+          <li>
+            <span class="label active">Others</span>
+            <span class="value">{{d.country.cases - d.country.deaths - d.country.critical - d.country.recovered | number}}</span>
+          </li>
+          <li class="total">
+            <span class="label">Total</span>
+            <span class="value">{{d.country.cases | number}}</span>
+          </li>
+        </ul>
+        <app-bar [dataSet]="[
+          {value: d.country.deaths, color: 'black'},
+          {value: d.country.critical, color: '#ff5722'},
+          {value: d.country.recovered, color: '#4caf50'},
+          {value: d.country.cases - d.country.deaths - d.country.critical - d.country.recovered, color: '#9E9E9E'}
+        ]"></app-bar>
+      </ng-container>
     </div>
     <div class="zoom mat-elevation-z6">
       <button mat-icon-button (click)="toggleFullScreen()">

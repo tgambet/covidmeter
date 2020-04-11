@@ -57,6 +57,9 @@ import * as d3 from 'd3';
           <a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
             (details)
           </a>
+          <a class="country-link" *ngIf="data.country.country === 'France'" [routerLink]="['france']" (click)="closeDialog()">
+            (map)
+          </a>
           <img [src]="data.country.countryInfo.flag" alt="flag"/>
         </app-overview>
       </ng-template>
