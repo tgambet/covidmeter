@@ -69,12 +69,12 @@ import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld
 
     h1 {
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 700;
       display: flex;
       flex-direction: row;
       align-items: center;
       margin: -16px -16px 0 -16px !important;
-      padding: 8px 16px 8px 16px;
+      padding: 8px 16px;
       min-height: 40px;
     }
 

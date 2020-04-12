@@ -25,16 +25,16 @@ import * as d3 from 'd3';
   template: `
     <div class="controls">
       <ng-container *ngIf="normalize$ | async; let normalize">
-        <button mat-mini-fab (click)="setNormalize(!normalize)" color="primary">
+        <button mat-mini-fab (click)="setNormalize(!normalize)" color="accent" class="align">
           <mat-icon>format_align_left</mat-icon>
         </button>
       </ng-container>
       <ng-container *ngIf="(normalize$ | async) === false; let normalize">
-        <button mat-mini-fab (click)="setNormalize(normalize)" color="primary">
+        <button mat-mini-fab (click)="setNormalize(normalize)" color="accent" class="align">
           <mat-icon>format_align_justify</mat-icon>
         </button>
       </ng-container>
-      <mat-form-field appearance="standard" class="sort">
+      <mat-form-field appearance="standard" class="sort" color="accent">
         <mat-label>Sort by</mat-label>
         <mat-select [value]="sortBy$ | async" (selectionChange)="setSortBy($event.value)">
           <mat-option *ngFor="let sortBy of sortBys" [value]="sortBy.value">
@@ -42,7 +42,7 @@ import * as d3 from 'd3';
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="standard" class="search" floatLabel="always">
+      <mat-form-field appearance="standard" class="search" floatLabel="always" color="accent">
         <mat-label>Search</mat-label>
         <input matInput placeholder="Search by location" (keyup)="search($event.target)">
       </mat-form-field>
@@ -50,17 +50,18 @@ import * as d3 from 'd3';
     <ng-container *ngFor="let data of dataSets$ | async; trackBy: trackByFn">
       <ng-template #dialog>
         <app-overview [countryName]="data.country.country">
-          <button mat-icon-button (click)="closeDialog()">
+          <button mat-raised-button (click)="closeDialog()" color="accent" class="small-button close">
             <mat-icon>close</mat-icon>
           </button>
           <span>{{data.country.country}}</span>
-          <a class="country-link" [routerLink]="['country', data.country.country]" (click)="closeDialog()">
-            (details)
+          <a mat-raised-button class="small-button map" *ngIf="data.country.country === 'France'"
+             [routerLink]="['france']" (click)="closeDialog()" color="accent">
+            <mat-icon>map</mat-icon>
           </a>
-          <a class="country-link" *ngIf="data.country.country === 'France'" [routerLink]="['france']" (click)="closeDialog()">
-            (map)
+          <a mat-raised-button class="small-button timeline"
+             [routerLink]="['country', data.country.country]" (click)="closeDialog()" color="accent">
+            <mat-icon>timeline</mat-icon>
           </a>
-          <img [src]="data.country.countryInfo.flag" alt="flag"/>
         </app-overview>
       </ng-template>
       <div class="country mat-elevation-z2" #countries
@@ -71,7 +72,7 @@ import * as d3 from 'd3';
       </div>
     </ng-container>
 
-    <button mat-mini-fab class="top" color="primary" (click)="backToTop()" [class.visible]="showBackToTop">
+    <button mat-mini-fab class="top" color="accent" (click)="backToTop()" [class.visible]="showBackToTop">
       <mat-icon>arrow_upward</mat-icon>
     </button>
   `,
@@ -92,6 +93,10 @@ import * as d3 from 'd3';
       max-width: calc(50vw - 20px - 16px);
     }
 
+    .align {
+      border-radius: 4px;
+    }
+
     .sort {
       padding: 0 12px;
       box-sizing: border-box;
@@ -108,6 +113,7 @@ import * as d3 from 'd3';
       padding: 8px 6px;
       border-radius: 4px;
       background-color: #424242;
+      cursor: pointer;
     }
 
     .country h1 {
@@ -115,13 +121,13 @@ import * as d3 from 'd3';
       margin: 0;
       padding: 0 8px 0 0;
       font-size: 12px;
-      line-height: 1;
-      font-weight: 400;
+      line-height: 1.2;
+      font-weight: 700;
       text-align: right;
-      color: white;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: white;
     }
 
     app-bar {
@@ -141,22 +147,26 @@ import * as d3 from 'd3';
       opacity: 1;
     }
 
-    app-overview img {
-      display: inline-block;
-      margin-left: auto;
-      height: 24px;
-      overflow: hidden;
+    app-overview span {
+      margin-right: auto;
     }
 
-    app-overview button {
-      position: relative;
-      left: -8px;
+    .small-button {
+      padding: 0 8px;
+      min-width: initial;
     }
 
-    .country-link {
-      margin-left: 8px;
-      font-size: 12px;
-      color: #aaa;
+    .map {
+      margin-right: 8px;
+    }
+
+    .timeline {
+      margin-right: -8px;
+    }
+
+    .close {
+      margin-right: 12px;
+      margin-left: -8px;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush

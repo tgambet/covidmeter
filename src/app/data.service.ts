@@ -58,7 +58,7 @@ export class DataService {
   }
 
   getFranceGeoJson(): Observable<any> {
-    return this.httpClient.get('/assets/france.geo.json');
+    return this.httpClient.get('/assets/france.min.geo.json');
   }
 
   getFranceData(): Observable<string> {

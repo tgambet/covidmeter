@@ -4,8 +4,8 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
   selector: 'app-world',
   template: `
     <app-overview>
-      <a mat-icon-button [routerLink]="['/']">
-        <mat-icon>arrow_back</mat-icon>
+      <a mat-raised-button [routerLink]="['/']" color="accent" class="back">
+        <mat-icon>keyboard_arrow_left</mat-icon>
       </a>
       <span>World overview</span>
       <mat-icon>language</mat-icon>
@@ -23,9 +23,11 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
       margin: 0 auto;
     }
 
-    a {
-      position: relative;
-      left: -8px;
+    .back {
+      padding: 0 8px;
+      min-width: initial;
+      margin-left: -8px;
+      margin-right: 12px;
     }
 
     mat-icon {

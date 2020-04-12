@@ -9,10 +9,9 @@ import {setFilterFrom} from './store/core.actions';
   template: `
     <app-overview>
       <span>World overview</span>
-      <a class="link" routerLink="world">(details)</a>
       <mat-icon>language</mat-icon>
     </app-overview>
-    <h1>Overview by country</h1>
+    <h1>Overview by country <span>(click on a country for details)</span></h1>
     <app-countries></app-countries>
     <p>
       Show countries with more than
@@ -37,12 +36,6 @@ import {setFilterFrom} from './store/core.actions';
       margin: 0 auto;
     }
 
-    .link {
-      margin-left: 8px;
-      font-size: 12px;
-      color: #aaa;
-    }
-
     mat-icon {
       margin-left: auto;
     }
@@ -53,8 +46,14 @@ import {setFilterFrom} from './store/core.actions';
 
     h1 {
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 700;
       margin: 16px 0 0 0;
+    }
+
+    h1 span {
+      font-size: 12px;
+      color: #aaa;
+      font-weight: 400;
     }
 
     p {

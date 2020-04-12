@@ -11,8 +11,8 @@ import {Country} from './data.service';
   template: `
     <ng-container *ngIf="country$ | async; let country">
       <app-overview [countryName]="country.country">
-        <a mat-icon-button [routerLink]="['/']">
-          <mat-icon>arrow_back</mat-icon>
+        <a mat-raised-button [routerLink]="['/']" color="accent" class="back">
+          <mat-icon>keyboard_arrow_left</mat-icon>
         </a>
         <span>{{country.country}} overview</span>
         <img [src]="country.countryInfo.flag" alt="flag"/>
@@ -31,11 +31,6 @@ import {Country} from './data.service';
       margin: 0 auto;
     }
 
-    a {
-      position: relative;
-      left: -8px;
-    }
-
     img {
       display: inline-block;
       margin-left: auto;
@@ -45,6 +40,13 @@ import {Country} from './data.service';
 
     app-timeline, app-growth {
       margin: 16px 0;
+    }
+
+    .back {
+      padding: 0 8px;
+      min-width: initial;
+      margin-left: -8px;
+      margin-right: 12px;
     }
   `]
 })

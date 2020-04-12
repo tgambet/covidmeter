@@ -11,9 +11,9 @@ import {NavigationEnd, Router} from '@angular/router';
   selector: 'app-root',
   template: `
     <mat-toolbar>
-      <img src="/assets/logo.svg" height="40" width="40" alt="log"/>
+      <img src="/assets/logo2.svg" height="40" width="96" alt="log"/>
       <a mat-icon-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-        <mat-icon>sort</mat-icon>
+        <mat-icon>assignment</mat-icon>
       </a>
       <a mat-icon-button routerLink="world" routerLinkActive="active">
         <mat-icon>timeline</mat-icon>
@@ -49,7 +49,7 @@ import {NavigationEnd, Router} from '@angular/router';
     }
 
     a.active {
-      color: #4caf50;
+      color: #40c4ff;
     }
 
     a:not(:last-child) {

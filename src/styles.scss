@@ -2,24 +2,26 @@
 
 @import '~@angular/material/theming';
 
+$typography-config: mat-typography-config('"Open Sans", sans-serif');
+
 // @include mat-core();
-@include mat-form-field-typography(mat-typography-config());
-@include mat-select-typography(mat-typography-config());
+@include mat-form-field-typography($typography-config);
+@include mat-select-typography($typography-config);
 
 @include mat-ripple();
 @include cdk-a11y();
 @include cdk-overlay();
 @include cdk-text-field();
 
-$dark-theme: mat-dark-theme(
+/*$dark-theme: mat-dark-theme(
     mat-palette($mat-light-green, A400),
     mat-palette($mat-light-blue, A400),
     mat-palette($mat-deep-orange, A200)
-);
+);*/
 
 $dark-theme: (
   primary: mat-palette($mat-green, 500),
-  accent: mat-palette($mat-light-blue, A400),
+  accent: mat-palette($mat-light-blue, A200),
   warn: mat-palette($mat-deep-orange, A200),
   is-dark: true,
   foreground: $mat-dark-theme-foreground,
@@ -83,47 +85,34 @@ $background-color: mat-color(map-get($dark-theme, background), background);
 
 // Fonts
 
-/* roboto-300 - latin */
+/* open-sans-300 - latin */
 @font-face {
-  font-family: 'Roboto';
+  font-family: 'Open Sans';
   font-style: normal;
   font-weight: 300;
-  src: local('Roboto Light'), local('Roboto-Light'),
-  url('/assets/fonts/roboto-v19-latin-300.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-  url('/assets/fonts/roboto-v19-latin-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local('Open Sans Light'), local('OpenSans-Light'),
+  url('/assets/fonts/open-sans-v17-latin-300.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+  url('/assets/fonts/open-sans-v17-latin-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
   font-display: swap;
 }
-
-/* roboto-regular - latin */
+/* open-sans-regular - latin */
 @font-face {
-  font-family: 'Roboto';
+  font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
-  src: local('Roboto'), local('Roboto-Regular'),
-  url('/assets/fonts/roboto-v19-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-  url('/assets/fonts/roboto-v19-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local('Open Sans Regular'), local('OpenSans-Regular'),
+  url('/assets/fonts/open-sans-v17-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+  url('/assets/fonts/open-sans-v17-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
   font-display: swap;
 }
-
-/* roboto-500 - latin */
+/* open-sans-700 - latin */
 @font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  src: local('Roboto Medium'), local('Roboto-Medium'),
-  url('/assets/fonts/roboto-v19-latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-  url('/assets/fonts/roboto-v19-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-  font-display: swap;
-}
-
-/* roboto-700 - latin */
-@font-face {
-  font-family: 'Roboto';
+  font-family: 'Open Sans';
   font-style: normal;
   font-weight: 700;
-  src: local('Roboto Bold'), local('Roboto-Bold'),
-  url('assets/fonts/roboto-v19-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-  url('assets/fonts/roboto-v19-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local('Open Sans Bold'), local('OpenSans-Bold'),
+  url('/assets/fonts/open-sans-v17-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+  url('/assets/fonts/open-sans-v17-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
   font-display: swap;
 }
 
@@ -170,7 +159,7 @@ html, body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /*@import '~@angular/cdk/text-field';
