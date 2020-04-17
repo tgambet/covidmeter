@@ -38,11 +38,11 @@ export class DataService {
   }
 
   getCountries(): Observable<Country[]> {
-    return this.httpClient.get('https://corona.lmao.ninja/countries') as Observable<Country[]>;
+    return this.httpClient.get('https://corona.lmao.ninja/v2/countries') as Observable<Country[]>;
   }
 
   getYesterdayCountries(): Observable<Country[]> {
-    return this.httpClient.get('https://corona.lmao.ninja/yesterday').pipe(
+    return this.httpClient.get('https://corona.lmao.ninja/v2/countries?yesterday=1').pipe(
       map((countries: Country[]) => countries.filter(c => c.country !== 'World'))
     );
   }
