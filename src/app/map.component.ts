@@ -217,7 +217,7 @@ import {setMapDataType, setMapScale} from './store/core.actions';
     }
 
     .label {
-      flex: 0 0 55%;
+      flex: 0 0 50%;
       text-align: right;
       padding-right: 8px;
       box-sizing: border-box;
@@ -244,7 +244,7 @@ import {setMapDataType, setMapScale} from './store/core.actions';
     }
 
     .value {
-      flex: 0 0 50px;
+      flex: 0 0 67px;
       text-align: right;
     }
   `],

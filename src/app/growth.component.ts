@@ -28,22 +28,22 @@ import {reduceTimeline, timelineToGrowthData, timelineToGrowthRateData} from './
         Recovered growth per day
       </h2>
       <app-chart [data$]="chartData5$" [colors]="['#4caf50']"></app-chart>
-      <mat-divider></mat-divider>
+<!--      <mat-divider></mat-divider>-->
 
-      <h2>
-        Cases growth rate per day
-      </h2>
-      <app-chart [data$]="chartData2$" [colors]="['#9e9e9e']" unit="%"></app-chart>
-      <mat-divider></mat-divider>
-      <h2>
-        Deaths growth rate per day
-      </h2>
-      <app-chart [data$]="chartData4$" [colors]="['rgba(0,0,0,0.75)']" unit="%"></app-chart>
-      <mat-divider></mat-divider>
-      <h2>
-        Recovered growth rate per day
-      </h2>
-      <app-chart [data$]="chartData6$" [colors]="['#4caf50']" unit="%"></app-chart>
+<!--      <h2>-->
+<!--        Cases growth rate per day-->
+<!--      </h2>-->
+<!--      <app-chart [data$]="chartData2$" [colors]="['#9e9e9e']" unit="%"></app-chart>-->
+<!--      <mat-divider></mat-divider>-->
+<!--      <h2>-->
+<!--        Deaths growth rate per day-->
+<!--      </h2>-->
+<!--      <app-chart [data$]="chartData4$" [colors]="['rgba(0,0,0,0.75)']" unit="%"></app-chart>-->
+<!--      <mat-divider></mat-divider>-->
+<!--      <h2>-->
+<!--        Recovered growth rate per day-->
+<!--      </h2>-->
+<!--      <app-chart [data$]="chartData6$" [colors]="['#4caf50']" unit="%"></app-chart>-->
       <p class="source meta">Source: Johns Hopkins University</p>
     </mat-card>
   `,

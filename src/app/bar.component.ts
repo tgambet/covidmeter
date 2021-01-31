@@ -89,7 +89,7 @@ export class BarComponent implements OnInit, OnChanges {
 
   @HostListener('window:resize')
   update() {
-    this.length = this.svg.nativeElement.clientWidth - (this.showTotal ? 30 : 0);
+    this.length = this.svg.nativeElement.clientWidth - (this.showTotal ? 40 : 0);
     this.total = this.dataSet.reduce((r, point) => r + point.value, 0);
     let offset = 0;
     this.displaySet = this.dataSet.map(point => {

@@ -16,11 +16,9 @@ import {setFilterFrom} from './store/core.actions';
     <p>
       Show countries with more than
       <select [value]="filterFrom$ | async" (change)="setFilterFrom($event.target)">
+        <option>100000</option>
+        <option>10000</option>
         <option>1000</option>
-        <option>500</option>
-        <option>100</option>
-        <option>50</option>
-        <option>10</option>
         <option>0</option>
       </select>
       cases.

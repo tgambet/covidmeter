@@ -21,9 +21,9 @@ import {NavigationEnd, Router} from '@angular/router';
       <a mat-icon-button routerLink="map" routerLinkActive="active">
         <mat-icon>map</mat-icon>
       </a>
-      <a mat-icon-button routerLink="about" routerLinkActive="active">
-        <mat-icon>help</mat-icon>
-      </a>
+<!--      <a mat-icon-button routerLink="about" routerLinkActive="active">-->
+<!--        <mat-icon>help</mat-icon>-->
+<!--      </a>-->
     </mat-toolbar>
     <main>
       <router-outlet></router-outlet>

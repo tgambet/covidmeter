@@ -130,7 +130,7 @@ import {getCountryByName, getWorld, getYesterdayCountryByName, getYesterdayWorld
     }
 
     .value {
-      flex: 0 0 75px;
+      flex: 0 0 100px;
       text-align: right;
       padding-right: 8px;
     }
